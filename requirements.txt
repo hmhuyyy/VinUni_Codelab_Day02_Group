@@ -1,5 +1,4 @@
-# Environment Dependencies
-# List all required python packages here.
-google-genai
-google-generativeai
-pytest
+google-genai==3.0.0
+pytest==9.2.0
+# Only needed to regenerate the submitted workflow PDF:
+reportlab>=4.0,<5.0

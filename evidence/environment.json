@@ -1,0 +1,26 @@
+{
+  "author": "Hoàng Bảo Nguyên",
+  "student_id": "2A202603384",
+  "verified_at_local": "2026-11-07T21:29:35+07:00",
+  "branch": "HoangBaoNguyen",
+  "template_main_commit": "9ad1a44e43eb21162229831bad6c38dfc69ade0d",
+  "python": "3.11.9",
+  "packages": {
+    "google-genai": "3.0.0",
+    "pytest": "9.2.0",
+    "reportlab": "4.5.1"
+  },
+  "default_model_in_code": "gemini-2.5-flash",
+  "final_live_model": "gemini-3.5-flash-lite",
+  "prompt_version": "2-semantic-commitment-guard",
+  "system_prompt_sha256": "e49028f99f37d29125a844c2de7531b6b6cef71ebb32a093921da930592bd50e",
+  "prototype_file_sha256": "62d3bf27b8771ad11ef24352041f2a1ff131437052e6e04c63c0ab304496b53d",
+  "offline_tests": 63,
+  "offline_failures": 0,
+  "autograder_score": "10.00/10.00",
+  "course_sources_and_grader_unchanged": true,
+  "pdf_pages": 2,
+  "pdf_visual_review": "both rendered pages inspected",
+  "remote_push_performed": false,
+  "human_operator_semantic_review_performed": false
+}

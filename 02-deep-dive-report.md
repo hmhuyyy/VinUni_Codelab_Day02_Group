@@ -1,0 +1,174 @@
+# Deep-Dive - Xanh SM Incident Drafting Co-pilot
+
+**Học viên:** Hoàng Bảo Nguyên | **Mã học viên:** 2A202603384  
+**Ngày:** 07/11/2026 | **Candidate cá nhân:** P1 | **Nhánh:** HoangBaoNguyen
+
+## 1. Quyết định và phạm vi bằng chứng
+
+**GO cho prototype kỹ thuật trên dữ liệu mô phỏng; NOT YET cho pilot vận hành thật.** Prototype có kiểm thử thực thi, nhưng chưa có baseline doanh nghiệp, nhãn SME, dữ liệu trạm/telemetry thật hoặc chấp thuận của Ops. Kết quả contract của model không chứng minh cải thiện SLA hay an toàn thực địa.
+
+Đây là bài cá nhân đề xuất để nhóm review. Bối cảnh Vin Smart Future được dùng theo đề bài; không khẳng định cơ cấu tổ chức hoặc số liệu nội bộ doanh nghiệp. Các thời gian, volume, chi phí và ngưỡng pilot dưới đây đều là giả định/mục tiêu thiết kế.
+
+## 2. Current-State Workflow - G1
+
+Trigger: tài xế báo sự cố pin. Kết thúc đo: operator hoàn tất duyệt, gửi theo quy trình hiện hành và ghi nhận case; **không bao gồm thời gian xe cứu hộ tới nơi**.
+
+| Bước | Operator / công cụ giả định | Input → Output | Phút/case giả định | Handoff / bottleneck |
+|---|---|---|---:|---|
+| B1 Nhận và làm rõ tin báo | Điều phối viên / kênh tiếp nhận | Tin nhắn/cuộc gọi → phiếu sự cố | 2 | H1: tài xế → điều phối |
+| B2 Xác minh xe, pin, độ mới dữ liệu | Điều phối viên / dashboard telemetry | Mã case/xe → trạng thái đã kiểm tra | 2 | H2: dashboard → người xử lý |
+| B3 Tra cứu trạm/quy trình | Điều phối viên / danh mục được duyệt | Pin/vị trí/trạm → phương án sơ bộ | 3 | **Bottleneck**: chuyển công cụ, kiểm tra tương thích |
+| B4 Soạn bản nháp | Điều phối viên / ứng dụng nội bộ | Phương án → lời nhắn dễ hiểu | 3 | **Bottleneck**: viết lại theo từng tình huống |
+| B5 Kiểm tra, duyệt và gửi | Operator; trưởng ca nếu ngoại lệ | Nháp → phản hồi được duyệt | 1 | H3: người duyệt → kênh tài xế |
+| B6 Ghi nhận và bàn giao | Điều phối viên / log case | Phản hồi → nhật ký xử lý | 1 | H4: điều phối → ca sau/đội xử lý |
+| **Tổng** | | | **12** | B3+B4 = 6 phút = 50% |
+
+Nhánh thiếu dữ liệu: B2/B3 → hỏi lại hoặc gọi trưởng ca → quay lại xác minh. Chưa có thời gian chờ thực tế nên không cộng một giá trị giả vào baseline. `04-workflow-diagram.pdf` thể hiện current-state, handoff, bottleneck và nhánh ngoại lệ; trang 2 thể hiện future-state.
+
+## 3. Problem Statement đủ sáu trường - G2
+
+| Trường | Nội dung |
+|---|---|
+| Actor / Operator | Điều phối viên tiếp nhận sự cố pin; trưởng ca là người duyệt ngoại lệ. Tài xế nhận phản hồi; Ops sở hữu quy trình |
+| Current Workflow | Nhận tin → xác minh telemetry → tra trạm/quy trình → soạn → duyệt/gửi → ghi log; tổng 12 phút/case trong giả định baseline |
+| Bottleneck | Tra cứu và soạn nháp chiếm 6/12 phút; nội dung tài xế có thể thiếu hoặc mâu thuẫn dữ liệu ứng dụng; thông tin cũ có thể bị dùng như hiện tại |
+| Business Impact | Kịch bản 12 case/ngày, 26 ngày/tháng: 312 case ×12/60 = **62,4 giờ xử lý theo case/tháng**. Chưa chứng minh volume, SLA breach hay doanh thu mất đi |
+| Success Metric | Mục tiêu luồng đủ dữ liệu ≤5 phút/case; báo cáo thêm toàn bộ case gồm fallback. Nháp được duyệt sau sửa nhẹ ≥80%; không tăng lỗi nội dung so với template; 100% hành động cần người duyệt; không có vi phạm hard boundary trên tập eval định trước |
+| Operational Boundary | Được đọc context đã cấp quyền và soạn nháp. Cấm tự gửi, đặt trạm, gọi cứu hộ thật, ghi đè telemetry theo lời tài xế, bịa trạm hoặc khẳng định hành động đã thực thi. Người duyệt chịu trách nhiệm kiểm tra nội dung và hành động |
+
+**Problem statement một câu:** Điều phối viên đang mất thời gian đối chiếu và soạn phản hồi trong workflow sự cố pin; cần hỗ trợ tạo nháp có căn cứ và kiểm soát dữ liệu, hướng tới giảm thời gian xử lý từ baseline giả định 12 xuống ≤5 phút cho luồng hợp lệ, với mọi hành động do người có thẩm quyền duyệt.
+
+## 4. Baseline, metric và thiết kế eval
+
+### 4.1 Ba phương án cần so sánh
+
+1. Manual hiện tại: operator thực hiện toàn bộ workflow.
+2. **Rule + template:** chọn nhánh từ dữ liệu có cấu trúc, điền mẫu cố định. Đây là baseline kỹ thuật bắt buộc.
+3. Rule + LLM draft: cùng dữ liệu, cùng quyết định của rule, LLM hỗ trợ diễn đạt; validator và operator kiểm tra.
+
+Nếu phương án 3 không giảm thời gian sửa hoặc không tăng chất lượng so với phương án 2, giữ Rule + template. Chưa có kết quả A/B để kết luận LLM tạo ROI dương.
+
+### 4.2 Cách đo và gate đề xuất
+
+| Metric | Định nghĩa / mẫu đo | Gate đề xuất, chưa đạt bằng chứng pilot |
+|---|---|---|
+| Thời gian xử lý toàn bộ case | Timestamp nhận → duyệt/gửi/ghi nhận; gồm retry và fallback; báo median, P95 và mean | Mean toàn bộ case < baseline đã đo; không chỉ chọn các case thành công |
+| Thời gian luồng hợp lệ | Đo riêng case đủ context và không fallback | Mục tiêu ≤5 phút/case |
+| Draft acceptance | Nháp giữ ý chính, chỉ sửa nhẹ / tổng nháp; tiêu chí SME chốt trước | ≥80%, so với template |
+| Hard boundary | Raw output vi phạm action/tag/approval/station / tổng response; báo API lỗi riêng | 0 vi phạm trong tập eval; không suy ra xác suất lỗi bằng 0 ngoài mẫu |
+| Chất lượng nội dung | Hai operator đánh giá căn cứ, không bịa, dễ hiểu và không khẳng định đã thực thi | Không kém baseline; mọi bất đồng phải phân xử |
+| Latency / availability | P50/P95 mỗi gọi; API lỗi và fallback theo toàn bộ lượt | Budget P95 model ≤10 giây là mục tiêu; timeout client 11 giây; chưa có ước lượng P95 ổn định |
+| Chi phí / case | Token usage thực tế + retry + thời gian người duyệt | Đo trước quyết định pilot; hiện chưa có số chi phí thực tế |
+
+Kế hoạch dữ liệu: 40 case development và 120 case held-out do SME gán nhãn; không chỉnh prompt theo held-out. Tập 120 gồm 50 thường lệ, 20 pin thấp, 20 thiếu/cũ, 10 trạm không hợp lệ, 10 injection, 10 biên số học. Các test nhỏ hiện tại là development checks, chưa thay thế tập này.
+
+## 5. AI Fit và Future-State - G3
+
+| Phương án | Vai trò phù hợp | Quyết định |
+|---|---|---|
+| Rule / workflow | Kiểm tra kiểu dữ liệu, độ mới, ngưỡng pin, trạm và quyền duyệt | **Bắt buộc**, dùng cả khi bỏ LLM |
+| LLM Feature | Soạn lời nhắn tiếng Việt theo context; xử lý cách diễn đạt đa dạng | Thử nghiệm có kiểm soát, phải vượt template |
+| Agentic Loop | Tự chọn bước/tool và thực hiện hành động nhiều vòng | Chưa có nhu cầu; tăng quyền và số failure modes không cần thiết |
+
+Future flow cố định:
+
+```mermaid
+flowchart TD
+ A[Nhận sự cố và xác thực case] --> B[Lấy context được phép: pin, tuổi dữ liệu, trạm]
+ B --> C[Rule kiểm tra dữ liệu và xác định nhánh]
+ C --> D{Context đủ và hợp lệ?}
+ D -- Không --> H[Điều phối xác minh và xử lý thủ công]
+ D -- Có --> E[LLM tạo nháp, không có tool thực thi]
+ E --> F{Validator: tag, JSON, action, approval, station}
+ F -- Lỗi hoặc API lỗi --> H
+ F -- Hợp lệ --> G[Người kiểm tra nội dung và duyệt]
+ G --> I[Con người gửi/điều phối bằng hệ thống hiện hành]
+ H --> I
+ I --> J[Ghi log, đo thời gian và kết quả]
+```
+
+Kế hoạch thời gian luồng hợp lệ: nhận 1,5 + lấy context 0,5 + rule/tra cứu 0,5 + tạo nháp/validate 0,2 + người duyệt 1,5 + gửi/ghi log 0,8 = **5 phút/case**. Đây là budget dự kiến, chưa đo bằng người dùng thật. Nếu fallback 20% và mất 12,5 phút gồm overhead, mean dự kiến = 0,8×5 + 0,2×12,5 = **6,5 phút**, không được quảng bá mọi case đều đạt 5 phút.
+
+## 6. Boundary và hợp đồng kỹ thuật
+
+- Input gồm `trusted_context` do ứng dụng cung cấp và `driver_message` không đáng tin về chỉ thị. Driver không được sửa context. Trong repo, tất cả context/trạm `SYN-*` đều mô phỏng, chưa có API telemetry/trạm thật.
+- Chính sách lab: pin **<5%** → đề xuất `dispatch_mobile_charger`; pin **=5%** sang nhánh thường. Prototype chủ động chặt hơn ví dụ: mọi case <5% đề xuất cứu hộ, kể cả trạm gần.
+- Dữ liệu thiếu/sai kiểu, pin ngoài 0-100, tuổi dữ liệu ngoài 0-300 giây → `escalate_human`. Với pin không critical, chỉ đề xuất trạm có id được cấp, khoảng cách 0-5 km, tương thích và còn khả dụng.
+- Các ngưỡng 5%, 5 km và 300 giây là policy mô phỏng; **không xác nhận xe có thể di chuyển an toàn**. Quy trình thật cần Ops/kỹ sư phê duyệt và dữ liệu hành trình phù hợp.
+- Output có prefix `[DRAFT_ONLY]` và JSON đúng năm khóa: `action`, `reason`, `draft_message`, `requires_human_approval`, `recommended_station_id`. `draft_message` cũng mang nhãn nháp; approval luôn `true`.
+- `dispatch_mobile_charger` là tên **đề xuất**, không phải lệnh đã gửi. Prototype không nối bất kỳ API hành động nào.
+- Raw output được kiểm tra trước fallback; response lỗi vẫn tính là lỗi. API lỗi là lỗi dịch vụ, không phải bằng chứng model vượt boundary. Tách riêng trong evidence.
+- Validator kiểm được cấu trúc và một số quyết định nghiệp vụ; chưa chứng minh toàn bộ ngữ nghĩa `reason`/`draft_message` là đúng. HITL vẫn bắt buộc.
+- Quan sát ở prompt v1: action đúng nhưng có câu hứa “sẽ điều động ... ngay lập tức” và nhận định “phạm vi an toàn”. Prompt v2 thu hẹp cách diễn đạt và validator chặn một số cụm cam kết/an toàn đã biết; regression tests giữ lại lỗi này. Heuristic không thay semantic evaluation.
+
+## 7. Stakeholder và RACI-lite
+
+R = thực hiện, A = chịu trách nhiệm cuối, C = tham vấn, I = nhận thông tin. Các vai trò dưới đây là đề xuất, chưa phải cam kết nhân sự doanh nghiệp.
+
+| Hoạt động | Ops owner / trưởng ca | Điều phối viên | AI Engineer | Platform / Data | Risk / Security |
+|---|---|---|---|---|---|
+| Chốt problem, baseline, metric | A | R | C | C | I |
+| Phê duyệt policy pin/trạm và ngoại lệ | A | C | C | C | R |
+| Chuẩn bị data và nhãn eval | A | R | R | R | C |
+| Xây rule, prompt và validator | A | C | R | C | C |
+| Duyệt từng phản hồi / hành động | A | R | I | I | C |
+| Dừng AI / rollback sang manual | A | R | C | R | C |
+
+Logging tối thiểu khi có pilot: case id giả danh, phiên bản prompt/model/policy, timestamp, raw output, validator result, fallback reason và quyết định người duyệt; che dữ liệu định danh, hạn chế truy cập, chốt retention với owner. Khi phát hiện vi phạm nghiêm trọng, trưởng ca tắt AI và quay về manual/template.
+
+## 8. Business case có tính fallback
+
+Giả định 312 case/tháng, baseline 12 phút, chi phí thời gian quy đổi 90.000 đồng/giờ:
+
+| Kịch bản | Thời gian xử lý quy đổi | Chênh lệch với baseline | Giá trị thời gian quy đổi |
+|---|---:|---:|---:|
+| Manual | 62,4 giờ/tháng | - | 5.616.000 đồng/tháng |
+| Mọi case đạt 5 phút, giả định lý tưởng | 26 giờ/tháng | 36,4 giờ/tháng | 3.276.000 đồng/tháng |
+| 20% fallback, mean 6,5 phút | 33,8 giờ/tháng | 28,6 giờ/tháng | 2.574.000 đồng/tháng |
+
+Đây là phép quy đổi theo kịch bản, **không phải tiết kiệm tiền mặt được đo**. Chưa trừ phí API, tích hợp, vận hành, gán nhãn, bảo mật và change management. Phải đo riêng thời gian làm việc tích cực, thời gian chờ và khả năng tái phân bổ nhân lực để tránh đếm hai lần. Chưa đủ dữ liệu kết luận ROI hoặc doanh thu.
+
+## 9. Readiness, gate và next experiment - G4
+
+| Câu hỏi | Trạng thái | Bằng chứng / việc còn thiếu |
+|---|---|---|
+| Có dữ liệu mẫu/logs để test? | **Có mẫu mô phỏng; chưa có log thật** | 9 tình huống lập trình; cần SME và nguồn dữ liệu được phép |
+| Có baseline thật? | **Chưa** | 12 phút là giả định; cần time study 30 case |
+| Rủi ro có HITL/fallback? | **Có thiết kế và test kỹ thuật** | Chưa thử với operator và hệ thống gửi thật |
+| Stakeholder sẵn sàng đổi workflow? | **Chưa xác minh** | Chưa phỏng vấn hay được Ops phê duyệt |
+| Có owner/rollback và eval đáng tin? | **Có đề xuất; chưa cam kết** | RACI và rollback plan cần xác nhận; held-out chưa có |
+
+**GO kỹ thuật:** cho phép tiếp tục test synthetic với rule, prompt và validator.  
+**NOT YET pilot:** thiếu baseline thực đo, owner xác nhận và semantic evaluation.  
+**NO-GO cho phần LLM** nếu Rule + template đạt chất lượng tương đương với ít công sức sửa hơn, hoặc chi phí/rủi ro tăng vượt giá trị.
+
+Thí nghiệm nhỏ tiếp theo trong 2 ngày làm việc (kế hoạch, chưa thực hiện):
+
+1. Ops owner và 2 operator thống nhất scope; đo 30 case ẩn danh, ghi cả fallback/chờ và thao tác tích cực.
+2. Chuẩn bị 40 dev + 120 held-out, hai người gán nhãn; phê duyệt chính sách và taxonomy lỗi.
+3. So sánh template và LLM trên cùng case, đảo thứ tự để giảm thiên lệch. Đo thời gian sửa, chất lượng và lỗi riêng.
+4. Họp gate: chỉ đề xuất pilot shadow nếu metric đạt, hard boundary không vi phạm trong mẫu, owner nhận trách nhiệm và rollback đã diễn tập. Chưa tự gửi hành động.
+
+## 10. Prototype, kết quả và giới hạn
+
+- Code: `starter-code/prompt_prototype.py`; kiểm thử: `tests/test_prompt_prototype.py`.
+- Chín adversarial cases được khai báo. Ba ca lõi chạy song song mặc định; `--limit 9 --pace-seconds 20` chạy bộ mở rộng khi quota cho phép. Tối đa 2 HTTP attempts cho lỗi server 500/502/503/504; không tự retry quota 429.
+- Evidence lịch sử ở `evidence/live-core-results.json`, `evidence/live-extended-results.json`; bản v2 ở `evidence/live-extended-v2-results.json` và lượt core cuối ở `evidence/live-results.json`. Tổng hợp cuối ở `evidence/verification-summary.md`.
+- Offline contract/SDK-wiring tests là fixture, không phải output model. Không tính fallback hoặc fixture là model pass.
+- Bộ chấm gốc được giữ nguyên. Passing autograder xác nhận điều kiện kỹ thuật mà nó kiểm tra, không thay điểm nội dung của giảng viên.
+
+### Điều kiện model và quota
+
+Lượt đầu đã có 3/3 ca lõi nhận phản hồi đạt contract v1 trên **Gemini 2.5 Flash**. Sau đó API báo hết quota miễn phí **20 requests/ngày** cho model này; chờ vài phút không giải quyết được. Xem `evidence/quota-diagnostic.json` và các log quota-limited.
+
+Thử bổ sung **Gemini 2.5 Flash-Lite** cũng nhận HTTP 404: model không còn phục vụ tài khoản mới. Phản hồi API chỉ định **Gemini 3.5 Flash-Lite** thay thế; cấu hình local được chọn tường minh qua `GEMINI_MODEL`. Code vẫn giữ default `gemini-2.5-flash` theo đề.
+
+Kết quả 2.5 Flash-Lite bị chặn nằm trong `evidence/live-extended-flash-lite-results.json`; probe và ba ca lõi cuối dùng **3.5 Flash-Lite**, ghi rõ model/prompt trong `evidence/live-model-availability-probe.json` và `evidence/live-results.json`. Chưa chạy đủ chín ca mở rộng trên model thay thế. Không kết luận model nào tốt hơn từ những lượt có điều kiện khác nhau. Nếu giảng viên yêu cầu đúng Flash cho phiên bản prompt cuối, cần chạy lại khi quota hồi phục hoặc bằng tài khoản có quota phù hợp.
+
+## Nguồn
+
+1. `README.md`, `01-worksheet.md`, `02-deliverable-example.md` của repository: cấu trúc nộp, rubric và tình huống mẫu.
+2. PDF bài giảng người học cung cấp, trang file 24, 29-30, 35-39: Problem Statement, stakeholder/RACI, feasibility và next experiment.
+3. [Google Gen AI Python SDK](https://googleapis.github.io/python-genai/): `Client`, `GenerateContentConfig`, `HttpOptions`; phiên bản chạy được ghi trong evidence.
+
+Không dùng con số ví dụ hoặc gợi ý AI làm thống kê đã kiểm chứng của Xanh SM.

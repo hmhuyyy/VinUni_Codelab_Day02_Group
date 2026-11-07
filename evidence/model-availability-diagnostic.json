@@ -1,0 +1,8 @@
+{
+  "source": "SDK error observed during this local session; summarized without credentials",
+  "observed_date_local": "2026-11-07",
+  "model": "gemini-2.5-flash-lite",
+  "http_status": 404,
+  "message": "This model models/gemini-2.5-flash-lite is no longer available to new users. Please update your code to use models/gemini-3.5-flash-lite for the latest features and improvements.",
+  "provider_suggested_model": "gemini-3.5-flash-lite"
+}
