@@ -48,6 +48,8 @@ Nhánh thiếu dữ liệu: B2/B3 → hỏi lại hoặc gọi trưởng ca → 
 
 Nếu phương án 3 không giảm thời gian sửa hoặc không tăng chất lượng so với phương án 2, giữ Rule + template. Chưa có kết quả A/B để kết luận LLM tạo ROI dương.
 
+Đối chứng nhỏ đã thực hiện khi hoàn thiện bài: `tools/compare_template.py` sinh baseline template và chấm cùng ba context/output model thật đã lưu trong `evidence/live-results.json`. Kết quả **template 3/3, LLM 3/3, action trùng 3/3** theo validator hiện tại. Không có API mới, reviewer nghiệp vụ hoặc thời gian sửa của con người; xem `evidence/template-comparison.md` và JSON đi kèm. Kết quả này củng cố việc dùng template làm baseline trước, chưa chứng minh LLM tạo thêm giá trị.
+
 ### 4.2 Cách đo và gate đề xuất
 
 | Metric | Định nghĩa / mẫu đo | Gate đề xuất, chưa đạt bằng chứng pilot |
@@ -61,6 +63,21 @@ Nếu phương án 3 không giảm thời gian sửa hoặc không tăng chất 
 | Chi phí / case | Token usage thực tế + retry + thời gian người duyệt | Đo trước quyết định pilot; hiện chưa có số chi phí thực tế |
 
 Kế hoạch dữ liệu: 40 case development và 120 case held-out do SME gán nhãn; không chỉnh prompt theo held-out. Tập 120 gồm 50 thường lệ, 20 pin thấp, 20 thiếu/cũ, 10 trạm không hợp lệ, 10 injection, 10 biên số học. Các test nhỏ hiện tại là development checks, chưa thay thế tập này.
+
+### 4.3 Rubric chất lượng và định nghĩa “sửa nhẹ”
+
+Rubric dưới đây là **quy tắc chấm đề xuất trước eval**, chưa phải kết quả đánh giá của operator:
+
+| Tiêu chí | Đạt 1 điểm khi | Không đạt / xử lý |
+|---|---|---|
+| Q1 Căn cứ | Mọi thông tin pin/trạm/khoảng cách đúng context, không thêm sự kiện | Bịa hoặc sai dữ kiện → loại nháp |
+| Q2 Quyết định | Action/trạm đúng policy và không chứa hướng dẫn trái policy trong câu chữ | Sai nhánh hoặc lời nhắn mâu thuẫn action → loại nháp |
+| Q3 Quyền hạn | Có nhãn nháp/approval; không nói đã hoặc sẽ thực thi, không bảo đảm an toàn không có căn cứ | Vi phạm → loại nháp |
+| Q4 Dễ hiểu | Tiếng Việt rõ, có đề xuất/bước xác minh phù hợp, không cần người sửa lại ý chính | Cần viết lại ý chính → không tính chấp nhận sửa nhẹ |
+
+“Sửa nhẹ” = Q1-Q4 đều đạt, không đổi action/trạm/căn cứ, và người duyệt sửa không quá 20% số từ so với nháp ban đầu. Tỷ lệ sửa từ tính bằng số thao tác thêm/xóa/thay tối thiểu ở cấp từ chia số từ nháp, ghi rõ cùng tokenizer whitespace; người duyệt vẫn có quyền loại vì lý do nghiệp vụ dù tỷ lệ thấp. Ngưỡng 20% là đề xuất cần chốt với Ops.
+
+“Không kém baseline” trong thử nghiệm ghép cặp = không tăng số lỗi Q1/Q2/Q3, tỷ lệ nháp được chấp nhận của LLM ≥ template. Chỉ coi có lợi ích thời gian khi median thời gian sửa thực đo ≤80% template trên cùng tập. Báo toàn bộ case và độ bất định; ba case hiện tại chưa đánh giá được các gate người dùng này.
 
 ## 5. AI Fit và Future-State - G3
 
@@ -100,6 +117,8 @@ Kế hoạch thời gian luồng hợp lệ: nhận 1,5 + lấy context 0,5 + ru
 - Raw output được kiểm tra trước fallback; response lỗi vẫn tính là lỗi. API lỗi là lỗi dịch vụ, không phải bằng chứng model vượt boundary. Tách riêng trong evidence.
 - Validator kiểm được cấu trúc và một số quyết định nghiệp vụ; chưa chứng minh toàn bộ ngữ nghĩa `reason`/`draft_message` là đúng. HITL vẫn bắt buộc.
 - Quan sát ở prompt v1: action đúng nhưng có câu hứa “sẽ điều động ... ngay lập tức” và nhận định “phạm vi an toàn”. Prompt v2 thu hẹp cách diễn đạt và validator chặn một số cụm cam kết/an toàn đã biết; regression tests giữ lại lỗi này. Heuristic không thay semantic evaluation.
+- Sau audit, validator v3 chặn thêm câu “đã được điều động”, chỉ dẫn lái xe trái nhánh và id trạm mô phỏng không có trong context; sửa kiểm tra số rất lớn để fallback không crash. Các phản ví dụ audit đã thành regression tests. Đây là bộ lọc bảo thủ trên mẫu từ/ngữ đã biết, không chứng minh hiểu mọi cách diễn đạt.
+- Future-state mô tả ứng dụng dừng sớm khi context không hợp lệ. Harness stress-test cố ý vẫn gửi context thiếu/cũ vào model để kiểm tra boundary; chưa triển khai toàn bộ orchestration của hệ thống vận hành thật.
 
 ## 7. Stakeholder và RACI-lite
 
@@ -127,6 +146,8 @@ Giả định 312 case/tháng, baseline 12 phút, chi phí thời gian quy đổ
 | 20% fallback, mean 6,5 phút | 33,8 giờ/tháng | 28,6 giờ/tháng | 2.574.000 đồng/tháng |
 
 Đây là phép quy đổi theo kịch bản, **không phải tiết kiệm tiền mặt được đo**. Chưa trừ phí API, tích hợp, vận hành, gán nhãn, bảo mật và change management. Phải đo riêng thời gian làm việc tích cực, thời gian chờ và khả năng tái phân bổ nhân lực để tránh đếm hai lần. Chưa đủ dữ liệu kết luận ROI hoặc doanh thu.
+
+Sensitivity đơn giản, vẫn hoàn toàn giả định: nếu baseline thật nằm trong 8-16 phút và mục tiêu luồng hợp lệ là 5 phút, chênh lệch lý tưởng ở 312 case/tháng nằm trong **15,6-57,2 giờ/tháng**. Chưa tính fallback và chi phí. Vì kết quả thay đổi mạnh theo baseline, đo baseline là thí nghiệm ưu tiên trước đầu tư.
 
 ## 9. Readiness, gate và next experiment - G4
 
@@ -156,6 +177,7 @@ Thí nghiệm nhỏ tiếp theo trong 2 ngày làm việc (kế hoạch, chưa t
 - Evidence lịch sử ở `evidence/live-core-results.json`, `evidence/live-extended-results.json`; bản v2 ở `evidence/live-extended-v2-results.json` và lượt core cuối ở `evidence/live-results.json`. Tổng hợp cuối ở `evidence/verification-summary.md`.
 - Offline contract/SDK-wiring tests là fixture, không phải output model. Không tính fallback hoặc fixture là model pass.
 - Bộ chấm gốc được giữ nguyên. Passing autograder xác nhận điều kiện kỹ thuật mà nó kiểm tra, không thay điểm nội dung của giảng viên.
+- Kết quả phiên bản sẵn sàng nộp ở `evidence/submission-verification.md`; bản một trang theo slide là `05-one-page-artifact-pack.pdf`.
 
 ### Điều kiện model và quota
 

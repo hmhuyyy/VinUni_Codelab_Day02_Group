@@ -55,6 +55,16 @@ Danh sách model trả về vẫn có 2.5 Flash-Lite, nhưng gọi generate lạ
 
 Lượt đầu trên 3.5 Flash-Lite có 2 phản hồi đạt contract và một lỗi server 504. Bản cuối thêm retry có giới hạn 2 attempts chỉ cho lỗi server 500/502/503/504; không retry quota 429 và không đổi lỗi dịch vụ thành pass giả. Core chạy song song để giữ thời gian dưới timeout của grader trong điều kiện dịch vụ bình thường. Log lỗi trước sửa được giữ riêng.
 
+### 3.7 Phản biện của tôi trong hội thoại và sửa sau audit
+
+Tôi đã yêu cầu một agent Sol 6.1 audit độc lập, yêu cầu đồng bộ GitHub trước khi chấm, rồi hỏi “API key ... chết thì có ảnh hưởng gì tới điểm bài làm không” và “có bắt buộc phải dùng model 2.5 Flash không, đề bài có chỗ nào yêu cầu thế không”. Đây là các câu hỏi có trong hội thoại; không phải prompt phản ánh được dựng thêm sau đó.
+
+Việc đọc lại dòng 139 của worksheet làm rõ một điểm: đề **chỉ định** 2.5 Flash, nhưng không ghi chế tài đổi model. Trợ lý đã điều chỉnh cách diễn đạt quá chặt trước đó. Vì vậy bài giữ model mặc định theo đề, ghi đúng model thực chạy và lý do thay thế, thay vì tuyên bố đổi model được mặc nhiên cho phép hoặc tự động bị trừ điểm. Đây là ví dụ cần đòi căn cứ ngay cả khi AI trả lời rất chắc chắn.
+
+Audit tại snapshot `bb1f3bd` ước lượng 91/100 và tìm được lỗi số cực lớn gây overflow/fallback crash cùng phản ví dụ câu chữ vượt guard. Khi tôi yêu cầu tiếp tục hoàn thiện để nộp, bản mới sửa thứ tự kiểm khoảng số, thêm bộ lọc cho các phản ví dụ và **19 tests bổ sung**, nâng từ 63 lên 82 offline tests. Prompt vẫn v2, validator ghi riêng v3 để phân biệt thay đổi code với thay prompt; output thô cũ không bị sửa.
+
+Tôi cũng yêu cầu đối chiếu yêu cầu nguyên văn. Card #1 được rút từ sáu xuống năm bước theo mẫu; phần deep-dive vẫn giữ sáu bước chi tiết. Bổ sung bản artifact pack một trang, rubric chấm chất lượng và đối chứng template trên ba output model đã lưu. Template cũng đạt contract nên bài không nhận LLM tạo lợi ích đã được chứng minh. Tôi chưa tự phỏng vấn stakeholder hay chấm output với người vận hành; các hoạt động này vẫn là kế hoạch.
+
 ## 4. Prompt kỹ thuật đã dùng và cách thu hẹp boundary
 
 System prompt trong code xác định vai trò drafting, nguồn `trusted_context`, giới hạn quyền hạn, ngưỡng policy và contract output. User input tách thành `driver_message` để không nhập lẫn chỉ thị nghiệp vụ với nội dung tài xế.
@@ -80,3 +90,5 @@ Bài học rút ra từ bộ bài là chất lượng giải pháp nằm ở vi�
 Tôi mang vào thảo luận nhóm một candidate có workflow, metric, boundary, RACI, prototype và evidence để các thành viên phản biện. Đây là đóng góp chuẩn bị cá nhân, chưa phải biên bản họp hoặc quyết định đã thống nhất của nhóm. Nếu nhóm chọn candidate khác, bộ kiểm tra boundary và cách ghi evidence vẫn có thể được điều chỉnh để dùng chung.
 
 Trước khi nộp, người học cần đọc lại nội dung, kiểm tra các giả định và hiểu cách chạy code để tự giải thích được phần việc mang tên mình. Nhật ký không tuyên bố các hoạt động stakeholder chưa diễn ra.
+
+Tài liệu `06-defense-notes.md` ghi các câu hỏi và ý chính để tôi chuẩn bị giải thích bài; đây là ghi chú ôn bài, không phải biên bản vấn đáp đã diễn ra.

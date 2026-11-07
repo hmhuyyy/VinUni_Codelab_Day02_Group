@@ -1,6 +1,6 @@
 # Cách đọc bằng chứng thực thi
 
-Đọc `verification-summary.md` trước. Evidence dùng dữ liệu mô phỏng, không có dữ liệu khách hàng hoặc API key. Các lượt có prompt version khác nhau không được gộp thành một lần đánh giá.
+Đọc **`submission-verification.md`** cho phiên bản sẵn sàng nộp. `verification-summary.md` và `environment.json` là snapshot lịch sử trước audit. Evidence dùng dữ liệu mô phỏng, không có dữ liệu khách hàng hoặc API key. Không gộp model, prompt hoặc validator khác nhau thành cùng điều kiện.
 
 | File | Ý nghĩa |
 |---|---|
@@ -26,6 +26,12 @@
 | `live-core-lite-server-error.json` | Lượt 3.5 Flash-Lite trước retry: 2 responses đạt contract, 1 lỗi server 504 |
 | `autograder-lite-server-error.txt` | Log bộ chấm của lượt server-error trước khi thêm retry |
 | `environment.json` | Phiên bản Python/thư viện, commit template và dấu vân tay mã nguồn cuối |
+| `offline-tests-submission.xml` | 82 tests của phiên bản đã sửa sau audit |
+| `autograder-submission.txt` | Lượt bộ chấm gốc mới sau khi sửa audit |
+| `live-core-before-submission.json` | Giữ nguyên output core trước lượt xác nhận mới |
+| `template-comparison.json` / `.md` | Đối chứng offline giữa template và ba output model đã ghi; không có API mới |
+| `submission-environment.json` | Metadata và dấu vân tay mã nguồn phiên bản sẵn sàng nộp |
+| `audit-sol61-bb1f3bd.md` | Audit độc lập của snapshot cũ; không phải điểm của phiên bản đã sửa |
 
 `passed` là số raw responses đáp ứng validator của đúng phiên bản đó. `api_error_count` và `contract_violations` được tách riêng ở bản v2. Nếu có API error, chưa được coi ca đó đã kiểm tra hành vi model. Fallback được ghi riêng, không làm response lỗi trở thành pass.
 

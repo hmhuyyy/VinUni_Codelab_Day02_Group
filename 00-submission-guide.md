@@ -6,12 +6,14 @@
 
 ## 1. Đọc và trình bày theo thứ tự
 
-1. `01-problem-scan.md`: năm cơ hội, ba cards và lý do chọn một candidate.
-2. `02-deep-dive-report.md`: workflow, Problem Statement, baseline, AI Fit, RACI và gate.
-3. `04-workflow-diagram.pdf`: hai trang current-state/future-state, thời gian và handoff.
-4. `starter-code/prompt_prototype.py`: code cá nhân và chín ca tấn công.
-5. `03-ai-log.md`: lịch sử hỗ trợ AI, lỗi thật và cách sửa.
-6. `evidence/verification-summary.md`: kết quả thực thi cuối và giới hạn.
+1. `05-one-page-artifact-pack.pdf`: bản một trang theo slide, dùng khi trình bày nhanh.
+2. `01-problem-scan.md`: năm cơ hội, ba cards và lý do chọn một candidate.
+3. `02-deep-dive-report.md`: workflow, Problem Statement, baseline, AI Fit, RACI và gate.
+4. `04-workflow-diagram.pdf`: hai trang current-state/future-state, thời gian và handoff.
+5. `starter-code/prompt_prototype.py`: code cá nhân và chín ca tấn công.
+6. `03-ai-log.md`: lịch sử hỗ trợ AI, lỗi thật và cách sửa.
+7. `evidence/submission-verification.md`: kết quả phiên bản sẵn sàng nộp và giới hạn.
+8. `06-defense-notes.md` và `SUBMISSION_CHECKLIST.md`: chuẩn bị giải thích và bàn giao.
 
 Tên/mã học viên được dùng để nhận diện bài. Bối cảnh doanh nghiệp và các metric kinh doanh là giả định discovery; không có khảo sát hoặc dữ liệu nội bộ thật.
 
@@ -42,7 +44,10 @@ Nếu `.venv` đã có thì dùng luôn, không cần tạo lại. `.env` ở m�
 
 ```powershell
 # Offline: không gọi Gemini, không tính là model pass
-.\.venv\Scripts\python.exe -m pytest -q --junitxml=evidence/offline-tests.xml
+.\.venv\Scripts\python.exe -m pytest -q --junitxml=evidence/offline-tests-submission.xml
+
+# Đối chứng với output thật đã lưu; không gọi API mới
+.\.venv\Scripts\python.exe tools/compare_template.py
 
 # Live: mặc định 3 ca lõi chạy song song, có sử dụng quota API
 .\.venv\Scripts\python.exe starter-code/prompt_prototype.py --report evidence/live-user-run.json
@@ -69,9 +74,10 @@ Không chạy nhiều lệnh live liên tiếp khi quota thấp. HTTP 429 là l�
 
 ```powershell
 .\.venv\Scripts\python.exe tools/build_workflow_pdf.py
+.\.venv\Scripts\python.exe tools/build_one_page_summary.py
 ```
 
-Đầu ra là PDF hai trang ở root để bộ chấm nhận đúng tên. Cần font Arial của Windows hoặc biến `LAB_FONT_DIR` trỏ tới thư mục có `arial.ttf` và `arialbd.ttf`.
+Đầu ra là workflow PDF hai trang và artifact pack PDF một trang ở root. Cần font Arial của Windows hoặc biến `LAB_FONT_DIR` trỏ tới thư mục có `arial.ttf` và `arialbd.ttf`.
 
 ## 5. Bàn giao và nộp cá nhân
 
@@ -80,17 +86,18 @@ Không chạy nhiều lệnh live liên tiếp khi quota thấp. HTTP 429 là l�
 - Nhật ký và các con số giả định cần được người học đọc, hiểu và xác nhận trước khi nộp.
 - Không có tuyên bố đã họp nhóm, phỏng vấn hoặc triển khai thực địa.
 
-Khi đã review nội dung và muốn nộp lên GitHub, thực hiện trong nhánh cá nhân:
+Nhánh cá nhân đã được push theo yêu cầu. Nếu bạn chỉnh sửa thêm, kiểm tra và cập nhật lại nhánh bằng các lệnh:
 
 ```powershell
 git status
 git add 00-submission-guide.md 01-problem-scan.md 02-deep-dive-report.md 03-ai-log.md 04-workflow-diagram.pdf
+git add 05-one-page-artifact-pack.md 05-one-page-artifact-pack.pdf 06-defense-notes.md SUBMISSION_CHECKLIST.md
 git add starter-code/prompt_prototype.py tests tools evidence requirements.txt .gitignore .env.example
 git commit -m "Complete Day02 individual lab - Hoang Bao Nguyen 2A202603384"
 git push -u origin HoangBaoNguyen
 ```
 
-Các lệnh commit/push trên là hướng dẫn cho bước nộp; quá trình chuẩn bị bộ bài không tự push hoặc thay đổi main.
+Giữ báo cáo và code cá nhân trên nhánh này; việc chọn báo cáo nhóm đưa vào main do nhóm/trưởng nhóm thực hiện theo README.
 
 ## 6. Tài liệu kỹ thuật
 

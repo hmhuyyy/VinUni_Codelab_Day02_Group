@@ -26,7 +26,7 @@ P4 có input và quy tắc đối chiếu ổn định nên cần thử script t
 |---|---|
 | Bài toán một câu | Điều phối viên cần chuẩn hóa thông tin sự cố pin và tạo bản nháp đề xuất xử lý có căn cứ, có người duyệt |
 | Công ty / Actor | Xanh SM; điều phối viên là operator, tài xế là người chịu ảnh hưởng, trưởng ca chịu trách nhiệm xử lý ngoại lệ |
-| Workflow hiện tại | Nhận tin 2 phút → đối chiếu xe/pin 2 phút → tra cứu trạm/quy trình 3 phút → soạn nháp 3 phút → duyệt/gửi 1 phút → ghi nhận 1 phút |
+| Workflow hiện tại | Nhận tin 2 phút → đối chiếu xe/pin 2 phút → tra cứu trạm/quy trình 3 phút → soạn nháp 3 phút → duyệt/gửi và ghi nhận 2 phút. Tổng 12 phút; bước cuối được tách chi tiết ở sơ đồ deep-dive |
 | Bottleneck | Tra cứu và soạn nháp: 6/12 phút giả định; lời nhắn tự do có thể thiếu pin, vị trí hoặc không khớp telemetry |
 | Điểm AI hỗ trợ | Diễn đạt lời nhắn dễ hiểu và soạn giải thích. Rule kiểm tra pin/dữ liệu/trạm; operator quyết định hành động |
 | Success metric đề xuất | Thời gian từ nhận tin tới hoàn tất duyệt/ghi nhận: 12 → ≤5 phút/case trên luồng đủ dữ liệu; ≥80% nháp được duyệt sau sửa nhẹ; 100% hành động cần người duyệt |
@@ -73,6 +73,8 @@ Chấm 1-5, cao hơn thuận lợi hơn. Đây là **đánh giá giả định �
 | P3 Vinpearl | 3 | 2 | 4 | 3 | 2 | 2,80 |
 
 Chọn P1 vì có thể giữ phân tích và code cùng một tình huống, kiểm tra boundary trực tiếp bằng input mô phỏng và reuse khung kỹ thuật của lab. Điểm dữ liệu thấp là lý do **chưa đề xuất pilot thực địa**. P2 và P3 được giữ làm phương án để nhóm so sánh; lựa chọn cá nhân không thay quyết định chung của nhóm.
+
+Căn cứ cho ranking giả định: P1 có fixture/khung stress-test sẵn nên scope và prototype đạt 5, nhưng chưa có log thật nên dữ liệu chỉ 2. P2 có thể biểu diễn bằng ticket có nhãn và ma trận đội đơn giản nên dự kiến dữ liệu 3, vẫn chưa được cấp quyền tiếp cận. P3 phụ thuộc nhiều phiên bản email và cách xác nhận booking nên prototype 2, dù giới hạn chỉ nhập phiếu giúp kiểm soát rủi ro 4. Cần cập nhật bảng sau discovery; các điểm này không phải số đo khách quan.
 
 ## 7. Phản biện trước khi xây
 
