@@ -1,3 +1,29 @@
+# Bài cá nhân - Hoàng Bảo Nguyên / 2A202603384
+
+Nhánh nộp: `HoangBaoNguyen`. Các file bài làm:
+
+- [01-problem-scan.md](01-problem-scan.md): 5 problems và 3 Quick Cards.
+- [02-deep-dive-report.md](02-deep-dive-report.md): phân tích, quyết định và kết quả thử nghiệm/đầu ra model.
+- [03-ai-log.md](03-ai-log.md): nhật ký sử dụng và phản biện AI.
+- [04-workflow-diagram.pdf](04-workflow-diagram.pdf): workflow trước/sau.
+- [05-one-page-artifact-pack.pdf](05-one-page-artifact-pack.pdf): bản tóm tắt một trang theo slide.
+- [starter-code/prompt_prototype.py](starter-code/prompt_prototype.py): prototype Python cá nhân.
+
+Chạy prototype trên Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+$env:GEMINI_API_KEY="YOUR_API_KEY"
+.\.venv\Scripts\python.exe starter-code/prompt_prototype.py
+```
+
+Code mặc định dùng `gemini-2.5-flash` theo worksheet. Lượt xác nhận được ghi trong báo cáo dùng `gemini-3.5-flash-lite` do giới hạn quota/khả dụng của tài khoản; để chủ động chọn model, đặt `$env:GEMINI_MODEL="gemini-3.5-flash-lite"` trước khi chạy. Không đưa key thật vào code hoặc Git.
+
+Kết quả đã ghi nhận: 82 tests offline đạt; ba ca lõi chạy thật đạt 3/3; bộ chấm kỹ thuật gốc đạt 10/10. Các số liệu kinh doanh là giả định có nhãn. Log chi tiết và công cụ soạn tài liệu được giữ local; kết quả cần chấm nằm trong báo cáo. Bên dưới giữ hướng dẫn gốc của lớp.
+
+---
+
 # 📖 Hướng Dẫn Học Viên (Student Guide) — Lab 02: AI Product Scoping
 
 Tài liệu này hướng dẫn chi tiết cách thiết lập môi trường lập trình Python, cấu hình API Key, quy trình phân nhánh Git làm việc nhóm và chuẩn bị sản phẩm nộp bài cho **Lab 02: AI Product Scoping (Vin Smart Future)**.

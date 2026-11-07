@@ -6,7 +6,7 @@
 
 ## 1. Phạm vi và mức độ bằng chứng
 
-Bài cá nhân được chuẩn bị với trợ lý AI trong bối cảnh giả lập Vin Smart Future của đề bài. Tôi chưa phỏng vấn nhân viên hoặc tiếp cận dữ liệu nội bộ các công ty. Các pain point dưới đây là **giả thuyết discovery**; thời gian, volume và mục tiêu là **giả định thiết kế**, không phải thống kê doanh nghiệp. Kết quả chạy phần mềm được dẫn riêng trong thư mục `evidence/`.
+Bài cá nhân được chuẩn bị với trợ lý AI trong bối cảnh giả lập Vin Smart Future của đề bài. Tôi chưa phỏng vấn nhân viên hoặc tiếp cận dữ liệu nội bộ các công ty. Các pain point dưới đây là **giả thuyết discovery**; thời gian, volume và mục tiêu là **giả định thiết kế**, không phải thống kê doanh nghiệp. Kết quả chạy phần mềm và các đầu ra model được trình bày trong mục Prototype của `02-deep-dive-report.md`.
 
 ## 2. SCAN: năm cơ hội, đủ bốn lenses
 

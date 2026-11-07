@@ -14,13 +14,13 @@ Các yêu cầu chính của tôi trong hội thoại: khám phá đầy đủ r
 | Bước | Mục đích / yêu cầu | AI hỗ trợ | Điểm phải kiểm tra và điều chỉnh | Dấu vết |
 |---|---|---|---|---|
 | 1 | Hiểu repo từ đầu tới cuối | Đọc README, worksheet, ví dụ, inspiration, code và bộ chấm; đối chiếu PDF | Phân biệt rubric 60/40 với autograder 10 điểm. Không coi bài mẫu hoặc nhánh đồng đội là bài cá nhân của mình | Tài liệu gốc trong repo; main ban đầu ở commit `9ad1a44` |
-| 2 | Xác định phần việc cá nhân và nhóm | Lập bản đồ điểm và đầu ra cần nộp | Worksheet yêu cầu ≥3 adversarial cases dù starter/grader chỉ ≥2; bám yêu cầu nội dung cao hơn | `00-submission-guide.md` |
+| 2 | Xác định phần việc cá nhân và nhóm | Lập bản đồ điểm và đầu ra cần nộp | Worksheet yêu cầu ≥3 adversarial cases dù starter/grader chỉ ≥2; bám yêu cầu nội dung cao hơn | `README.md` và rubric trong worksheet |
 | 3 | Chọn một candidate nhất quán | Đề xuất 5 problems, 3 cards và candidate Xanh SM | Mọi số liệu volume/thời gian là giả định; không dùng từ “khảo sát cho thấy” hoặc nhận là số nội bộ | `01-problem-scan.md` |
 | 4 | Stress-test giải pháp | Phản biện Rule vs LLM vs Agent | Rule giữ quyết định pin/trạm. LLM cần chứng minh tốt hơn template; không mặc định build Agent | `02-deep-dive-report.md`, mục baseline và AI Fit |
 | 5 | Viết prototype boundary | Hoàn thiện prompt, parser, rule guard và fallback | Giữ raw output nguyên trạng; không thêm tag để rồi tính model pass. Fallback không xóa dấu vết lỗi | `starter-code/prompt_prototype.py` |
-| 6 | Chạy SDK thật | Cài SDK trong `.venv` và gọi Gemini bằng dữ liệu mô phỏng | Timeout 6,5 giây bị API từ chối vì tối thiểu 10 giây; sửa thành 11 giây. API v1 không chấp nhận chỉ thị ở cấu hình đang dùng; chỉ định `v1beta` | `evidence/live-probe.json`, `evidence/live-initial-config-error.json` |
+| 6 | Chạy SDK thật | Cài SDK trong `.venv` và gọi Gemini bằng dữ liệu mô phỏng | Timeout 6,5 giây bị API từ chối vì tối thiểu 10 giây; sửa thành 11 giây. API v1 không chấp nhận chỉ thị ở cấu hình đang dùng; chỉ định `v1beta` | Phần điều kiện API và kết quả thử nghiệm trong báo cáo |
 | 7 | Xử lý quota | Phân biệt HTTP 429 với lỗi boundary của model | Không gọi 429 là hallucination. Chạy 3 ca lõi mặc định và giãn lượt khi chạy 9 ca mở rộng | `--limit`, `--pace-seconds`, evidence chạy thật |
-| 8 | Kiểm tra độc lập với model | Test các ngưỡng 4,9/5/5,1%, dữ liệu cũ, kiểu dữ liệu sai và output bị sửa | Offline fixture chỉ xác minh code/contract; không đại diện độ chính xác Gemini | `tests/test_prompt_prototype.py`, `evidence/offline-tests.xml` |
+| 8 | Kiểm tra độc lập với model | Test các ngưỡng 4,9/5/5,1%, dữ liệu cũ, kiểu dữ liệu sai và output bị sửa | Offline fixture chỉ xác minh code/contract; không đại diện độ chính xác Gemini | 82 test offline, tổng hợp ở mục 10 của báo cáo |
 | 9 | Chuẩn bị phần bàn giao nhóm | Viết workflow, RACI, readiness và next experiment | GO technical không đồng nghĩa GO production; nhóm vẫn phải review/chọn candidate chung | Báo cáo và sơ đồ workflow |
 
 ## 3. Những câu trả lời hoặc cách làm AI cần sửa
@@ -79,7 +79,7 @@ Sáu ca mở rộng kiểm tra sửa pin, thiếu/cũ telemetry, trạm không t
 
 ## 5. Kết quả và giới hạn của việc sử dụng AI
 
-Kết quả thực thi cuối cùng, thời điểm, phiên bản thư viện và đường dẫn evidence được tổng hợp tại `evidence/verification-summary.md`. Output thô và trạng thái fallback nằm trong JSON; kết quả offline có JUnit XML. Không sao chép con số của bài mẫu hoặc nhánh thành viên khác thành kết quả chạy của bài này.
+Kết quả thực thi cuối cùng, thời điểm, phiên bản và ba phản hồi model gốc được trình bày tại mục 10 của `02-deep-dive-report.md`. Log/JUnit và tài liệu làm việc chi tiết được giữ local. Không sao chép con số của bài mẫu hoặc nhánh thành viên khác thành kết quả chạy của bài này.
 
 AI giúp chuẩn hóa tài liệu, viết nhanh prototype, phản biện kiến trúc và tìm lỗi cấu hình. Phần còn cần người học/nhóm làm là kiểm chứng quy trình với domain owner, xác nhận metric, đánh giá nội dung nháp và bảo vệ quyết định trước lớp. Các bài kiểm tra tự động hiện tại không thay việc đó.
 
@@ -91,4 +91,4 @@ Tôi mang vào thảo luận nhóm một candidate có workflow, metric, boundar
 
 Trước khi nộp, người học cần đọc lại nội dung, kiểm tra các giả định và hiểu cách chạy code để tự giải thích được phần việc mang tên mình. Nhật ký không tuyên bố các hoạt động stakeholder chưa diễn ra.
 
-Tài liệu `06-defense-notes.md` ghi các câu hỏi và ý chính để tôi chuẩn bị giải thích bài; đây là ghi chú ôn bài, không phải biên bản vấn đáp đã diễn ra.
+Khi giải thích bài, cần chỉ được vai trò của `policy_action`, `validate_response`, `safe_fallback` và `evaluate_prompt`; phân biệt test offline với lượt model thật, mục tiêu thiết kế với số liệu đã đo.

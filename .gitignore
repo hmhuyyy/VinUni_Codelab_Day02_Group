@@ -4,3 +4,13 @@ __pycache__/
 .pytest_cache/
 *.pyc
 tmp/
+
+# Local development/verification material, not part of the lab submission.
+.env.example
+00-submission-guide.md
+05-one-page-artifact-pack.md
+06-defense-notes.md
+SUBMISSION_CHECKLIST.md
+evidence/
+tests/
+tools/
