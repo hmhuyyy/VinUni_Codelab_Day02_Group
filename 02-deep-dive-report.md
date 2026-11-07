@@ -240,7 +240,7 @@ Không gộp các model/phiên bản thành cùng điều kiện, không tuyên 
 
 ## Nguồn
 
-1. `README.md`, `01-worksheet.md`, `02-deliverable-example.md` của repository: cấu trúc nộp, rubric và tình huống mẫu.
+1. [Hướng dẫn lớp](https://github.com/hmhuyyy/VinUni_Codelab_Day02_Group/blob/main/README.md), [worksheet](https://github.com/hmhuyyy/VinUni_Codelab_Day02_Group/blob/main/01-worksheet.md), [bài mẫu](https://github.com/hmhuyyy/VinUni_Codelab_Day02_Group/blob/main/02-deliverable-example.md): cấu trúc nộp, rubric và tình huống mẫu; xem bản gốc tại nhánh main.
 2. PDF bài giảng người học cung cấp, trang file 24, 29-30, 35-39: Problem Statement, stakeholder/RACI, feasibility và next experiment.
 3. [Google Gen AI Python SDK](https://googleapis.github.io/python-genai/): `Client`, `GenerateContentConfig`, `HttpOptions`; phiên bản chạy: `google-genai==3.0.0`.
 

@@ -84,6 +84,6 @@ Căn cứ cho ranking giả định: P1 có fixture/khung stress-test sẵn nên
 
 ## Nguồn và liên kết
 
-- `01-worksheet.md`: phase SCAN, QUICK-ASSESS và rubric I1.
-- `02-deliverable-example.md`: bối cảnh mẫu Xanh SM; bài này bổ sung phân tách telemetry/nội dung tài xế, kiểm tra dữ liệu cũ và rule guard.
+- [Worksheet của lớp](https://github.com/hmhuyyy/VinUni_Codelab_Day02_Group/blob/main/01-worksheet.md): phase SCAN, QUICK-ASSESS và rubric I1.
+- [Bài mẫu của lớp](https://github.com/hmhuyyy/VinUni_Codelab_Day02_Group/blob/main/02-deliverable-example.md): bối cảnh mẫu Xanh SM; bài này bổ sung phân tách telemetry/nội dung tài xế, kiểm tra dữ liệu cũ và rule guard.
 - `02-deep-dive-report.md`: phân tích candidate P1 và điều kiện ra quyết định.
