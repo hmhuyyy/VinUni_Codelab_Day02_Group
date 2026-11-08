@@ -1,25 +1,25 @@
-# Phase 6 — AI Log & Reflection
+# Giai đoạn 6 — Nhật ký sử dụng AI và tự phản ánh
 
-> Draft reflection based on my work on this lab. I will personalize it before submitting, especially any details that do not match my own experience.
+> Bản nháp tự phản ánh dựa trên quá trình làm bài. Tôi sẽ chỉnh sửa trước khi nộp, nhất là những chi tiết chưa khớp với trải nghiệm thực tế của mình.
 
-## How I used AI
+## Tôi đã sử dụng AI như thế nào
 
-I used AI as a brainstorming partner to list possible operational problems and turn one of them into a problem statement, workflow, metrics, and a prompt prototype. It helped me organize the work into actors, steps, bottlenecks, boundaries, and test cases. The most useful part was asking it to challenge whether an LLM was actually needed and where a human should remain in control.
+Tôi dùng AI như một người cùng động não để liệt kê các vấn đề vận hành tiềm năng và phát triển một vấn đề thành mô tả bài toán, quy trình, chỉ số đo lường và bản mẫu câu lệnh. AI giúp tôi sắp xếp công việc theo các vai trò, bước thực hiện, điểm nghẽn, ranh giới vận hành và trường hợp kiểm thử. Hữu ích nhất là nhờ AI phản biện xem có thực sự cần mô hình ngôn ngữ lớn hay không và ở bước nào con người cần giữ quyền kiểm soát.
 
-## Where I had to verify or correct it
+## Những điều tôi phải kiểm chứng hoặc chỉnh sửa
 
-Early suggestions included specific figures such as minutes per case and cancellation percentages without evidence from company data. I treated those as unverified, removed unsupported baseline claims, and marked remaining targets as hypotheses to measure. I also noticed that an initial Xanh SM pickup-point idea did not match the battery/mobile-charger scenario in the starter code. I aligned the selected problem with the prototype and changed the architecture to use deterministic rules for the battery and distance limits, with an LLM only drafting an explanation.
+Những gợi ý ban đầu có các con số cụ thể như số phút xử lý mỗi trường hợp và tỷ lệ hủy chuyến nhưng không có dữ liệu công ty làm bằng chứng. Tôi xem chúng là chưa được xác minh, bỏ các khẳng định về số liệu ban đầu không có căn cứ và đánh dấu những mục tiêu còn lại là giả thuyết cần đo. Tôi cũng nhận ra ý tưởng ban đầu về điểm đón của Xanh SM không khớp với tình huống pin yếu/sạc di động trong mã khung. Tôi điều chỉnh bài toán được chọn cho phù hợp với bản mẫu và đổi kiến trúc sang dùng quy tắc xác định cho ngưỡng pin và khoảng cách; mô hình ngôn ngữ lớn chỉ soạn phần giải thích.
 
-The first run also showed that the starter file had not yet implemented the API call. After implementing it, I encountered an API-version error; changing the Gemini client to `v1beta` resolved that error. The two adversarial tests I ran then passed. This showed me that successful output on a couple of examples is useful evidence, but not proof that a prompt is safe or ready for production.
+Lần chạy đầu cũng cho thấy tệp khung chưa có phần gọi API. Sau khi bổ sung, tôi gặp lỗi phiên bản API; đổi cấu hình ứng dụng Gemini sang `v1beta` đã khắc phục lỗi đó. Hai bài kiểm thử đối kháng tôi chạy sau đó đều đạt. Điều này cho tôi thấy kết quả tốt trên một vài ví dụ là bằng chứng hữu ích, nhưng không chứng minh câu lệnh an toàn hoặc sẵn sàng đưa vào sử dụng thực tế.
 
-## What I changed because of that
+## Những điều tôi đã thay đổi
 
-- Marked operational workflow details, time estimates, and impact figures as assumptions until they can be checked with operators and logs.
-- Kept `[DRAFT_ONLY]` on every response and made clear that a proposed dispatch is not an executed dispatch.
-- Put the battery threshold and maximum station distance in deterministic rules rather than relying on the LLM to calculate safety.
-- Added a missing-telemetry/prompt-injection test and made failed checks return a non-zero process status. I still need to run that added test with a valid API key.
-- Kept a human approval step and manual fallback in the proposed workflow.
+- Đánh dấu chi tiết quy trình, ước tính thời gian và số liệu tác động là giả định cho đến khi có thể kiểm tra với nhân viên vận hành và nhật ký.
+- Giữ nhãn `[DRAFT_ONLY]` trong mọi phản hồi và nói rõ đề xuất điều xe không đồng nghĩa với việc xe đã được điều đi.
+- Đưa ngưỡng pin và khoảng cách trạm tối đa vào quy tắc xác định, thay vì dựa vào mô hình ngôn ngữ lớn để tự tính toán an toàn.
+- Thêm bài kiểm thử thiếu dữ liệu cảm biến/chèn lệnh vào câu lệnh và đặt chương trình trả về mã lỗi khác 0 khi kiểm tra thất bại. Tôi vẫn cần chạy bài kiểm thử mới bằng khóa API hợp lệ.
+- Giữ bước phê duyệt của con người và phương án thủ công dự phòng trong quy trình đề xuất.
 
-## Reflection
+## Tự phản ánh
 
-AI helped me move from a broad idea to a testable prototype quickly, but it also made plausible-sounding assumptions easy to mistake for facts. I need to check claims against real evidence, use rules for strict safety constraints, and treat model output as a draft. Before recommending deployment, I would validate the workflow with the people who do the work, test representative and adversarial cases, and measure performance against a real baseline.
+AI giúp tôi nhanh chóng chuyển từ một ý tưởng rộng thành bản mẫu có thể kiểm thử, nhưng cũng khiến những giả định nghe có vẻ hợp lý dễ bị nhầm thành sự thật. Tôi cần kiểm tra các khẳng định bằng bằng chứng thực tế, dùng quy tắc cho các giới hạn an toàn nghiêm ngặt và xem đầu ra của mô hình là bản nháp. Trước khi đề xuất triển khai, tôi sẽ xác minh quy trình với những người trực tiếp thực hiện, kiểm thử các tình huống đại diện và đối kháng, rồi đo hiệu quả so với số liệu ban đầu thực tế.

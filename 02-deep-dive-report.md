@@ -1,79 +1,79 @@
-# Phase 3 & 5 — Deep-Dive Report and Evaluation
+# Giai đoạn 3 và 5 — Báo cáo phân tích sâu và đánh giá
 
-> **Scope:** Individual draft for group review. This report scopes an Xanh SM electric-fleet low-battery assistance workflow to match the prompt prototype. The workflow and operational figures below are hypotheses, not confirmed Xanh SM internal process data. Validate them with operators and telemetry before implementation.
+> **Phạm vi:** Bản cá nhân để nhóm xem xét. Báo cáo phân tích quy trình hỗ trợ xe điện Xanh SM khi pin yếu, thống nhất với bản mẫu câu lệnh. Quy trình và các chỉ số vận hành dưới đây là giả thuyết, không phải dữ liệu nội bộ Xanh SM đã xác nhận. Cần kiểm chứng với nhân viên vận hành và dữ liệu cảm biến trước khi triển khai.
 
-## Selected problem
+## Bài toán được chọn
 
-When an electric vehicle reports battery below 5%, the operator needs to verify the vehicle's battery level and location, then prepare a safe assistance plan. The prototype must not recommend a charging station more than 5 km away and must never claim that a mobile charger has actually been dispatched.
+Khi xe điện báo pin dưới 5%, nhân viên vận hành cần xác minh mức pin và vị trí xe, sau đó chuẩn bị phương án hỗ trợ an toàn. Bản mẫu không được gợi ý trạm sạc cách xa hơn 5 km và tuyệt đối không được khẳng định xe sạc di động đã được điều đi.
 
-## 3.1 Current-State Workflow Mapping
+## 3.1. Sơ đồ quy trình hiện tại
 
-### Current-state hypothesis
+### Giả thuyết về quy trình hiện tại
 
-1. 🔄 The vehicle telemetry or driver reports a low-battery alert to the operations team.
-2. 🔄 The driver shares the current vehicle location and battery reading; an operator checks that the information is current.
-3. 🔴 The operator identifies available options and checks whether a charging station is within a safe distance. For a battery level below 5%, a station over 5 km away must not be recommended.
-4. The operator contacts the appropriate assistance resource, such as a mobile charging team, and waits for availability confirmation.
-5. 🔄 The operator reviews and communicates the approved plan to the driver.
-6. The driver acknowledges the plan and proceeds only when instructed by an authorized human.
+1. 🔄 Dữ liệu cảm biến xe hoặc tài xế gửi cảnh báo pin yếu đến bộ phận vận hành.
+2. 🔄 Tài xế cung cấp vị trí hiện tại và mức pin; nhân viên vận hành kiểm tra thông tin còn mới và chính xác.
+3. 🔴 Nhân viên xác định các phương án sẵn có và kiểm tra xem trạm sạc có nằm trong khoảng cách an toàn hay không. Nếu pin dưới 5%, không được gợi ý trạm cách xa hơn 5 km.
+4. Nhân viên liên hệ nguồn hỗ trợ phù hợp, chẳng hạn đội sạc di động, và chờ xác nhận tình trạng sẵn sàng.
+5. 🔄 Nhân viên xem xét phương án đã được duyệt và thông báo cho tài xế.
+6. Tài xế xác nhận đã nhận hướng dẫn và chỉ thực hiện khi có chỉ đạo của người có thẩm quyền.
 
-### Handoffs and bottleneck
+### Điểm bàn giao và điểm nghẽn
 
-- **Handoffs:** vehicle/driver → operations; operations → assistance resource; operations → driver.
-- **Potential bottleneck:** manually verifying telemetry/location and coordinating assistance availability.
-- **Time per case:** baseline is unknown. Measure alert-to-verified-plan time and time spent by each role; do not treat an estimate as an observed result.
-- **Workflow diagram:** [04-workflow-diagram.pdf](./04-workflow-diagram.pdf).
+- **Điểm bàn giao:** xe/tài xế → bộ phận vận hành; bộ phận vận hành → nguồn hỗ trợ; bộ phận vận hành → tài xế.
+- **Điểm nghẽn tiềm năng:** xác minh thủ công dữ liệu cảm biến/vị trí và điều phối nguồn hỗ trợ.
+- **Thời gian mỗi trường hợp:** chưa biết số liệu ban đầu. Cần đo thời gian từ lúc có cảnh báo đến khi xác minh xong phương án và thời gian xử lý của từng vai trò; không xem số ước tính là kết quả quan sát.
+- **Sơ đồ quy trình:** [04-workflow-diagram.pdf](./04-workflow-diagram.pdf).
 
-### Baseline data to collect
+### Dữ liệu ban đầu cần thu thập
 
-For a representative sample of low-battery incidents, record alert time, verified battery/location, operator handling time, assistance availability/arrival, chosen resolution, and whether the driver needed to contact operations again. Exclude personal identifiers from the prototype dataset.
+Với một mẫu đại diện các sự cố pin yếu, ghi nhận thời điểm cảnh báo, mức pin/vị trí đã xác minh, thời gian xử lý của nhân viên, tình trạng sẵn sàng/thời điểm đến của nguồn hỗ trợ, phương án được chọn và việc tài xế có phải liên hệ lại bộ phận vận hành hay không. Loại bỏ thông tin nhận dạng cá nhân khỏi tập dữ liệu dùng cho bản mẫu.
 
-## 3.2 Problem Statement (6-field) & Metrics
+## 3.2. Mô tả bài toán 6 trường và chỉ số đo lường
 
-| Field | Details |
+| Trường thông tin | Nội dung |
 |---|---|
-| **1. Actor / Operator** | Xanh SM driver and fleet operations controller; a mobile charging operator may be involved. Roles and handoffs need confirmation with the operations team. |
-| **2. Current Workflow** | A low-battery alert or driver report is received → an operator verifies battery and location → checks safe charging/assistance options → contacts the appropriate resource → reviews and communicates the plan to the driver. This is a workflow hypothesis; the actual systems and steps are not yet verified. |
-| **3. Bottleneck** | Verification of current telemetry/location and manual coordination of assistance. The time and incident frequency have not yet been measured. |
-| **4. Business Impact** | Delayed assistance may increase vehicle downtime, driver workload, passenger disruption, and risk from an unsuitable route. Financial or SLA impact is unknown until incident logs and operator interviews establish a baseline. |
-| **5. Success Metric** | **Safety gate:** 100% of validated cases with battery below 5% produce no recommendation for a station over 5 km away. **Prototype quality:** all required response fields present and all responses begin with `[DRAFT_ONLY]` on the acceptance set. **Operational target to validate:** reduce alert-to-human-approved-plan time to under 2 minutes without increasing incorrect or unnecessary dispatch recommendations. Establish baseline before claiming improvement. |
-| **6. Operational Boundary** | The model may draft a structured recommendation from verified inputs. It must not infer missing battery/location values, recommend a station over 5 km away when battery is below 5%, execute a dispatch, change a route, cancel a ride, set a price, or send a customer message. A human operator must verify inputs and approve any action. If data is missing, confidence is low, or the service is unavailable, stop and use the existing manual escalation process. |
+| **1. Người thực hiện/vận hành** | Tài xế Xanh SM và nhân viên điều hành đội xe; có thể có sự tham gia của nhân viên sạc di động. Cần xác nhận vai trò và các điểm bàn giao với đội vận hành. |
+| **2. Quy trình hiện tại** | Nhận cảnh báo pin yếu hoặc báo cáo từ tài xế → nhân viên xác minh mức pin và vị trí → kiểm tra phương án sạc/hỗ trợ an toàn → liên hệ nguồn hỗ trợ phù hợp → xem xét và thông báo phương án cho tài xế. Đây là giả thuyết quy trình; hệ thống và các bước thực tế chưa được xác minh. |
+| **3. Điểm nghẽn** | Xác minh dữ liệu cảm biến/vị trí còn cập nhật và điều phối hỗ trợ thủ công. Thời gian xử lý và tần suất sự cố chưa được đo. |
+| **4. Tác động kinh doanh** | Hỗ trợ chậm có thể làm tăng thời gian xe ngừng hoạt động, khối lượng công việc của tài xế, ảnh hưởng đến hành khách và rủi ro do chọn tuyến không phù hợp. Tác động tài chính hoặc mức dịch vụ chưa rõ cho đến khi có số liệu ban đầu từ nhật ký sự cố và phỏng vấn nhân viên. |
+| **5. Chỉ số thành công** | **Điều kiện an toàn:** 100% trường hợp đã xác minh có pin dưới 5% không được gợi ý trạm cách xa hơn 5 km. **Chất lượng bản mẫu:** mọi phản hồi trong tập kiểm thử đều có đủ trường bắt buộc và bắt đầu bằng `[DRAFT_ONLY]`. **Mục tiêu vận hành cần kiểm chứng:** giảm thời gian từ cảnh báo đến phương án được người có thẩm quyền duyệt xuống dưới 2 phút, không làm tăng đề xuất điều xe sai hoặc không cần thiết. Cần xác lập số liệu ban đầu trước khi khẳng định có cải thiện. |
+| **6. Ranh giới vận hành** | Mô hình chỉ được soạn đề xuất có cấu trúc từ dữ liệu đã xác minh. Không được tự suy đoán mức pin/vị trí còn thiếu, gợi ý trạm cách xa hơn 5 km khi pin dưới 5%, thực hiện điều xe, đổi tuyến, hủy chuyến, đặt giá hoặc gửi tin nhắn cho khách. Nhân viên vận hành phải xác minh dữ liệu và duyệt mọi hành động. Nếu thiếu dữ liệu, độ tin cậy thấp hoặc dịch vụ không khả dụng, dừng đề xuất và quay lại quy trình xử lý thủ công hiện có. |
 
-## 3.3 Future-State Flow & AI Fit
+## 3.3. Quy trình tương lai và mức độ phù hợp với AI
 
-### AI-Fit assessment
+### Đánh giá mức độ phù hợp với AI
 
-| Option | Fit | Reason |
+| Phương án | Mức độ phù hợp | Lý do |
 |---|---|---|
-| **Rule / State-Machine** | **Primary** | The battery threshold and 5 km limit are explicit safety rules. They should be enforced deterministically, not entrusted to an LLM. |
-| **LLM Feature** | **Limited supporting role** | It can format a human-readable explanation or draft from verified, structured inputs. It cannot determine whether a real dispatch is available or execute it. |
-| **Agentic Loop** | **Not appropriate for this prototype** | Autonomous tool use or dispatch would cross the operational boundary and add risk without evidence of need. |
+| **Quy tắc/máy trạng thái** | **Chính** | Ngưỡng pin và giới hạn 5 km là các quy tắc an toàn rõ ràng. Cần áp dụng bằng logic xác định, không giao việc thực thi cho mô hình ngôn ngữ lớn. |
+| **Tính năng mô hình ngôn ngữ lớn (LLM)** | **Vai trò hỗ trợ hạn chế** | Có thể diễn đạt giải thích dễ hiểu hoặc tạo bản nháp từ dữ liệu có cấu trúc đã xác minh. Không thể xác định nguồn lực điều xe thực tế có sẵn hay tự thực hiện điều xe. |
+| **Vòng lặp tác nhân tự động** | **Không phù hợp với bản mẫu này** | Tự động dùng công cụ hoặc điều xe sẽ vượt ranh giới vận hành và làm tăng rủi ro khi chưa có bằng chứng về nhu cầu. |
 
-### Future-state flow
+### Quy trình tương lai
 
-1. Receive a low-battery alert and retrieve the associated telemetry.
-2. **Rule check:** verify battery and location are present, current, and within configured limits. If not, stop and ask an operator to verify.
-3. **Rule check:** if battery is below 5%, prohibit recommendations to stations farther than 5 km and select the mobile-assistance option as a *proposal*.
-4. 🔵 **AI step:** generate a short `[DRAFT_ONLY]` explanation and structured proposal using only the verified input fields.
-5. 🟢 **Human step (HITL):** the operator checks the telemetry, resource availability, and proposal, then approves or edits it.
-6. An authorized operator—not the model—contacts the assistance resource and communicates the approved plan.
-7. ↩️ **Fallback:** on missing/stale data, invalid output, model/API failure, or uncertainty, show no recommendation and return to the existing manual escalation process.
+1. Nhận cảnh báo pin yếu và truy xuất dữ liệu cảm biến liên quan.
+2. **Kiểm tra quy tắc:** xác nhận có mức pin và vị trí, dữ liệu còn cập nhật và nằm trong giới hạn cấu hình. Nếu không, dừng lại và yêu cầu nhân viên xác minh.
+3. **Kiểm tra quy tắc:** nếu pin dưới 5%, cấm gợi ý trạm cách xa hơn 5 km và chọn phương án hỗ trợ sạc di động dưới dạng *đề xuất*.
+4. 🔵 **Bước AI:** chỉ dùng các trường dữ liệu đầu vào đã xác minh để tạo giải thích ngắn có nhãn `[DRAFT_ONLY]` và đề xuất theo cấu trúc.
+5. 🟢 **Bước con người (HITL — con người kiểm tra và phê duyệt):** nhân viên kiểm tra dữ liệu cảm biến, tình trạng nguồn lực và đề xuất, sau đó duyệt hoặc chỉnh sửa.
+6. Nhân viên có thẩm quyền — không phải mô hình — liên hệ nguồn hỗ trợ và thông báo phương án đã duyệt.
+7. ↩️ **Phương án dự phòng:** nếu thiếu dữ liệu, dữ liệu cũ, đầu ra không hợp lệ, mô hình/API lỗi hoặc không chắc chắn, không đưa ra đề xuất và quay lại quy trình xử lý thủ công hiện có.
 
-### Prototype evidence and limitations (Phase 4)
+### Bằng chứng và giới hạn của bản mẫu (Giai đoạn 4)
 
-- The two adversarial tests run so far passed: the 2% battery case produced a mobile-charger proposal without recommending the 8 km station, and the send-directly request retained `[DRAFT_ONLY]`.
-- These are prompt-level checks on two examples, not proof of production safety or model reliability.
-- A third test for missing telemetry and prompt injection has been added to the prototype but still needs to be run with a valid API key.
-- The prototype has no live dispatch integration; an `action` in its output is a proposal only.
+- Hai bài kiểm thử đối kháng đã chạy đều đạt: trường hợp pin 2% đưa ra đề xuất sạc di động mà không gợi ý trạm cách 8 km; yêu cầu gửi tin trực tiếp vẫn giữ nhãn `[DRAFT_ONLY]`.
+- Đây chỉ là kiểm tra câu lệnh trên hai ví dụ, không chứng minh hệ thống an toàn khi vận hành thực tế hay mô hình luôn đáng tin cậy.
+- Bài kiểm thử thứ ba về thiếu dữ liệu cảm biến và chèn lệnh vào câu lệnh đã được thêm vào bản mẫu nhưng chưa chạy với khóa API hợp lệ.
+- Bản mẫu không kết nối hệ thống điều xe thực tế; trường `action` trong kết quả chỉ là đề xuất.
 
-## Phase 5 — Evaluate
+## Giai đoạn 5 — Đánh giá
 
-### AI Readiness Checklist
+### Danh sách kiểm tra mức độ sẵn sàng cho AI
 
-- [ ] Clean, representative operational logs and a labeled test set are available. **Not confirmed.**
-- [ ] Risk is controlled by tested deterministic guardrails, human approval, monitoring, and fallback. **Designed, but not yet validated end-to-end.**
-- [ ] Operations stakeholders have reviewed the workflow and are ready to adopt it. **Not confirmed.**
+- [ ] Có nhật ký vận hành đại diện, dữ liệu sạch và tập kiểm thử đã gán nhãn. **Chưa xác nhận.**
+- [ ] Rủi ro được kiểm soát bằng quy tắc xác định đã kiểm thử, phê duyệt của con người, giám sát và phương án dự phòng. **Đã thiết kế nhưng chưa kiểm chứng toàn quy trình.**
+- [ ] Các bên vận hành đã xem xét quy trình và sẵn sàng áp dụng. **Chưa xác nhận.**
 
-### Decision: **NOT YET**
+### Quyết định: **CHƯA TRIỂN KHAI**
 
-The prompt prototype is a useful scoping experiment: the two executed adversarial cases passed, and the proposed scope includes human review and a manual fallback. That is not enough evidence to begin operational deployment. First confirm the current workflow with Xanh SM operators, obtain privacy-reviewed and representative incident data, measure baseline handling time, run the expanded test set (including the new missing-telemetry case), and enforce the battery/distance rules outside the LLM. Reassess after those checks; a narrow offline pilot may then be considered.
+Bản mẫu câu lệnh là thử nghiệm hữu ích để xác định phạm vi: hai trường hợp đối kháng đã chạy đều đạt, quy trình đề xuất có bước con người kiểm tra và phương án thủ công dự phòng. Tuy nhiên, bằng chứng này chưa đủ để triển khai trong hoạt động thực tế. Trước tiên cần xác nhận quy trình hiện tại với nhân viên Xanh SM, thu thập dữ liệu sự cố đại diện đã được rà soát về quyền riêng tư, đo thời gian xử lý ban đầu, chạy tập kiểm thử mở rộng (bao gồm trường hợp thiếu dữ liệu cảm biến) và thực thi quy tắc pin/khoảng cách bên ngoài mô hình ngôn ngữ lớn. Sau khi hoàn tất các bước đó, có thể đánh giá lại khả năng thử nghiệm ngoại tuyến trong phạm vi hẹp.
