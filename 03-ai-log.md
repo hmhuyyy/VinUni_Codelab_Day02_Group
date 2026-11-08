@@ -20,7 +20,8 @@ Người học đã hỏi mức trùng với worked example, sau đó yêu cầu
 | Chạy Gemini 2.5 Flash | Thử chương trình thật, giữ raw output | LF-1 bare tag bị chặn; LF-2 có response đạt nhưng còn HTTP 429 |
 | Thử model thay thế | Chọn tường minh 3.5 Flash-Lite, ghi riêng model/version | Core cuối 3/3 đạt, không nhận là 2.5 Flash |
 | Kiểm thử code | 92/92 pytest, SDK mock và phản ví dụ ngữ nghĩa | Offline không phải responses Gemini; annotation synthetic chưa SME chấm |
-| Chạy grader gốc | 9,50/10 và exit 1 do check từ khoá pin | Giữ grader nguyên; không thêm từ ngoài scope để lấy điểm |
+| Chạy grader gốc | 9,50/10 và exit 1 do check từ khoá pin | Giữ nguyên log gốc và xác định điều kiện gây mất 0,5 |
+| Yêu cầu mới của người học: giữ Vinpearl và sửa check | Đổi gate prompt sang chỉ thị + 10 negative probes, giữ trọng số và các gate còn lại | Lượt thật đạt 10/10 exit 0; 30 test grader và tổng 122 offline đạt; ghi rõ grader đã điều chỉnh |
 
 ## 3. Những lỗi/giới hạn AI đã phải sửa
 
@@ -40,9 +41,13 @@ Regression đặt một đoạn location có thật vào `item_description`: con
 
 Baseline parse nhãn và một mẫu câu tự do đã đạt 12/12 fixture. Tập test còn nhỏ/quen thuộc, chưa có người đo công sửa; chưa chứng minh giá trị LLM vượt form/rule. LLM chỉ là feature thử nghiệm; nếu form đáp ứng tốt thì bỏ LLM.
 
-### 3.5 Bộ chấm có giả định về đề tài
+### 3.5 Sửa check gắn với worked example theo yêu cầu mới
 
-Grader gốc chỉ kiểm các keyword của ví dụ pin để cho điểm prompt, nên đề tài mới nhận 0,5/1 ở check này. Tôi/trợ lý không đổi grader hoặc nhét keyword pin/xe sạc vào prompt. Log thật là 9,50/10, không kế thừa 10/10 của bài cũ. Cần người chấm đánh giá boundary đúng nhiệm vụ và điều kiện model; chưa có xác nhận của giảng viên trong phiên này.
+Lượt đầu dùng grader nguyên bản và ghi nhận 9,50/10. Sau đó người học yêu cầu giữ Vinpearl Lost-Property Intake, thay check keyword của ví dụ và sửa để đạt 10/10. Trợ lý đã điều chỉnh chính file grader trong nhánh cá nhân; không thêm keyword pin/xe sạc vào System Prompt, không sửa log cũ và không nhận thay đổi này do giảng viên ban hành.
+
+Check mới vẫn cần chỉ thị rõ và validator hoạt động: phải nhận reference đúng, chặn 10 response sai bằng lỗi BoundaryViolation có kiểm soát. Bổ sung 30 test grader, gồm validator bị làm yếu/luôn nhận/luôn từ chối hoặc crash. Kết quả thật của grader điều chỉnh là 10,00/10, exit 0; các test offline tổng 122/122 đạt. Script tiếp tục gọi Gemini thật trong full run. Model được chọn tường minh là 3.5 Flash-Lite; điều kiện 2.5 Flash trong worksheet vẫn cần được xử lý riêng như báo cáo.
+
+Giới hạn cần hiểu: điều chỉnh công cụ kiểm kỹ thuật không tạo thêm dữ liệu business, không chứng minh chất lượng với operator và không tự quyết định điểm chính thức. Log/phạm vi chấm được ghi rõ để người học và người chấm kiểm lại.
 
 ## 4. Prompt và dữ liệu có dấu vết
 

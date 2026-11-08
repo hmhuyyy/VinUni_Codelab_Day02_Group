@@ -4,15 +4,112 @@ import inspect
 import subprocess
 import importlib.util
 import re
+import copy
+import json
 
-# Đảm bảo mã hóa UTF-8 cho stdout trên mọi nền tảng
-if sys.stdout.encoding != 'utf-8':
+# Local adaptation: source-grounded intake contract replaces the example-specific
+# battery keyword heuristic. Point weights and the remaining four code checks stay
+# unchanged. This is not an instructor-issued replacement for the original grader.
+GRADER_PROFILE = "source-grounded-intake-v1"
+
+
+def check_prompt_boundary(student):
+    """Check explicit instructions AND real rejection of malformed intake drafts.
+
+    No API calls. A valid reference comes from the declared synthetic annotation;
+    negative probes are constructed independently here. A permissive validator,
+    missing validator, invalid reference or unexpected crash cannot earn full credit.
+    """
+    prompt = getattr(student, "SYSTEM_PROMPT", None)
+    if not isinstance(prompt, str) or not prompt.strip() or "todo:" in prompt.casefold() or "write your strict" in prompt.casefold():
+        return False, ["missing_or_template_prompt"]
+    lower = prompt.casefold()
+    concepts = {
+        "draft_envelope": "[draft_only]" in lower,
+        "structured_output": "json" in lower and "fields" in lower,
+        "mandatory_human_approval": "requires_human_approval" in lower and bool(re.search(r"always\s+true", lower)),
+        "source_grounding": all(term in lower for term in ("source_note", "evidence", "verbatim")),
+        "missing_information": "missing_fields" in lower and "null" in lower,
+        "no_execution_tools": "no tools" in lower and "never" in lower,
+        "untrusted_requests": "user_request" in lower and "untrusted" in lower,
+    }
+    failures = [name for name, passed in concepts.items() if not passed]
+    if failures:
+        return False, failures
+    validate = getattr(student, "validate_response", None)
+    boundary_error = getattr(student, "BoundaryViolation", None)
+    if not callable(validate):
+        return False, ["missing_boundary_validator"]
+    if not isinstance(boundary_error, type) or not issubclass(boundary_error, ValueError):
+        return False, ["missing_controlled_boundary_error"]
+    tests = getattr(student, "ADVERSARIAL_TESTS", None)
+    if not isinstance(tests, list):
+        return False, ["missing_reference_fixture"]
+    reference = next((t for t in tests if isinstance(t, dict)
+        and isinstance(t.get("trusted_context"), dict)
+        and isinstance(t["trusted_context"].get("source_note"), str)
+        and isinstance(t["trusted_context"].get("case_id"), str)
+        and isinstance(t.get("expected_fields"), dict)
+        and t["expected_fields"] and all(type(v) is str and v for v in t["expected_fields"].values())
+        and isinstance(t.get("expected_action"), str)), None)
+    if reference is None:
+        return False, ["missing_complete_synthetic_annotation"]
+    context = copy.deepcopy(reference["trusted_context"])
+    fields = copy.deepcopy(reference["expected_fields"])
+    valid = {"case_id": context["case_id"], "action": reference["expected_action"],
+             "fields": fields, "evidence": copy.deepcopy(fields), "missing_fields": [],
+             "requires_human_approval": True}
+
+    def envelope(data):
+        return "[DRAFT_ONLY]\n" + json.dumps(data, ensure_ascii=False)
+
+    raw = envelope(valid)
     try:
-        import io
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+        if validate(raw, copy.deepcopy(context)) != valid:
+            return False, ["reference_not_returned_unchanged"]
     except Exception:
-        pass
+        return False, ["valid_reference_rejected"]
+    key = next(iter(fields))
+    unsupported = "__AUTOGRADER_UNSUPPORTED_VALUE__"
+    while unsupported in context["source_note"]:
+        unsupported += "X"
+    probes = [("missing_draft_tag", json.dumps(valid, ensure_ascii=False)),
+              ("bare_draft_tag", raw.replace("[DRAFT_ONLY]", "DRAFT_ONLY", 1))]
+    changes = []
+    bad = copy.deepcopy(valid)
+    bad["requires_human_approval"] = False
+    changes.append(("approval_bypass", bad))
+    bad = copy.deepcopy(valid)
+    bad["case_id"] = context["case_id"] + "-FORGED"
+    changes.append(("forged_case_id", bad))
+    bad = copy.deepcopy(valid)
+    bad["fields"][key] = bad["evidence"][key] = unsupported
+    changes.append(("invented_source_evidence", bad))
+    bad = copy.deepcopy(valid)
+    bad["evidence"][key] = unsupported
+    changes.append(("field_evidence_mismatch", bad))
+    bad = copy.deepcopy(valid)
+    bad["owner_phone"] = "UNSUPPORTED_CONTACT"
+    changes.append(("unauthorized_contact_field", bad))
+    bad = copy.deepcopy(valid)
+    bad["action"] = "release_item"
+    changes.append(("unauthorized_execution", bad))
+    bad = copy.deepcopy(valid)
+    bad["missing_fields"] = [key]
+    changes.append(("inconsistent_missing_fields", bad))
+    probes += [(name, envelope(data)) for name, data in changes]
+    duplicate = json.dumps(valid, ensure_ascii=False)[:-1] + ', "requires_human_approval": true}'
+    probes.append(("duplicate_json_key", "[DRAFT_ONLY]\n" + duplicate))
+    for name, candidate in probes:
+        try:
+            validate(candidate, copy.deepcopy(context))
+        except boundary_error:
+            continue
+        except Exception:
+            failures.append(name + ":validator_crashed")
+        else:
+            failures.append(name + ":accepted_invalid_output")
+    return not failures, failures or [f"instructions_and_{len(probes)}_rejection_probes_passed"]
 
 def find_student_file():
     """Tìm đường dẫn file prompt_prototype.py ở các thư mục phổ biến."""
@@ -77,7 +174,10 @@ def load_student_module(file_path):
     return module
 
 def run_autograder():
-    print("[SETUP] Bat dau cham diem Group Assignment tren GitHub Classroom\n" + "="*60)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    print("[SETUP] LOCAL ADAPTED AUTOGRADER - Vinpearl Lost-Property Intake")
+    print(f"[PROFILE] {GRADER_PROFILE}; original point weights; not an instructor-issued grade\n" + "="*60)
     
     # Individual file checks
     if "--check-file-1" in sys.argv:
@@ -119,18 +219,9 @@ def run_autograder():
     # Individual code checks
     if "--check-code-1" in sys.argv:
         student, _ = get_student_module_or_exit()
-        sys_prompt = getattr(student, "SYSTEM_PROMPT", "")
-        if not sys_prompt or "TODO:" in sys_prompt or "Write your strict" in sys_prompt:
-            print("[FAIL] SYSTEM_PROMPT not defined or still has TODO template")
-            sys.exit(1)
-        keywords = ["draft_only", "5%", "dispatch_mobile_charger"]
-        matched_keys = [k for k in keywords if k in sys_prompt.lower() or k.replace("_", " ") in sys_prompt.lower()]
-        if len(matched_keys) >= 2:
-            print(f"[PASS] SYSTEM_PROMPT is valid. Matched: {matched_keys}")
-            sys.exit(0)
-        else:
-            print("[FAIL] SYSTEM_PROMPT is missing core safety guidelines")
-            sys.exit(1)
+        passed, details = check_prompt_boundary(student)
+        print(("[PASS] " if passed else "[FAIL] ") + "Prompt/contract: " + ", ".join(details))
+        sys.exit(0 if passed else 1)
 
     if "--check-code-2" in sys.argv:
         student, _ = get_student_module_or_exit()
@@ -293,19 +384,18 @@ def run_autograder():
                 # 1. Kiểm tra SYSTEM_PROMPT (1.0đ)
                 try:
                     sys_prompt = getattr(student, "SYSTEM_PROMPT", "")
-                    if not sys_prompt or "TODO:" in sys_prompt or "Write your strict" in sys_prompt:
+                    if not isinstance(sys_prompt, str) or not sys_prompt.strip() or "todo:" in sys_prompt.casefold() or "write your strict" in sys_prompt.casefold():
                         all_code_passed = False
                         report.append("[FAIL] Code - Tieu chi 1: SYSTEM_PROMPT chua duoc dinh nghia hoac van giu nguyen TODO mau. (0.0/1.0d)")
                     else:
-                        keywords = ["draft_only", "5%", "dispatch_mobile_charger"]
-                        matched_keys = [k for k in keywords if k in sys_prompt.lower() or k.replace("_", " ") in sys_prompt.lower()]
-                        if len(matched_keys) >= 2:
+                        boundary_passed, details = check_prompt_boundary(student)
+                        if boundary_passed:
                             score += 1.0
-                            report.append("[PASS] Code - Tieu chi 1: SYSTEM_PROMPT hop le va co chi thi ranh gioi. (+1.0d)")
+                            report.append("[PASS] Code - Tieu chi 1: Prompt + source/approval/schema rejection probes: " + ", ".join(details) + ". (+1.0d)")
                         else:
                             all_code_passed = False
                             score += 0.5
-                            report.append("[WARN] Code - Tieu chi 1: SYSTEM_PROMPT co thay doi nhung thieu cac quy tac ranh gioi cot loi. (+0.5/1.0d)")
+                            report.append("[WARN] Code - Tieu chi 1: Prompt/contract check failed: " + ", ".join(details) + ". (+0.5/1.0d)")
                 except Exception as e:
                     all_code_passed = False
                     report.append(f"[FAIL] Code - Tieu chi 1: Loi khi check SYSTEM_PROMPT: {e} (0.0/1.0d)")
@@ -404,12 +494,12 @@ def run_autograder():
     # IN KẾT QUẢ VÀ THIẾT LẬP EXIT CODE
     # =========================================================================
     print("\n" + "="*60)
-    print("[REPORT] KET QUA CHAM DIEM TONG HOP CHO CA NHOM:")
+    print("[REPORT] KET QUA KIEM TRA KY THUAT LOCAL (ADAPTED GRADER):")
     for line in report:
         print(line)
         
     print("="*60)
-    print(f"[SCORE] TONG DIEM NHOM: {score:.2f} / {total_max_score:.2f}")
+    print(f"[SCORE] DIEM KY THUAT LOCAL: {score:.2f} / {total_max_score:.2f}")
     
     # Thoát với mã lỗi 1 nếu thiếu file hoặc test code bị lỗi trong phần được chạy
     should_fail = False

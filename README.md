@@ -33,15 +33,19 @@ Default là **live / Gemini 2.5 Flash** theo worksheet. `--mode template` là ba
 
 - **92/92 test offline** của đề tài mới đạt; không tái sử dụng số 82 của đề tài cũ.
 - **12/12 fixture template** qua contract và khớp annotation do trợ lý soạn cho dữ liệu synthetic.
-- Lượt core cuối: **3/3 raw Gemini 3.5 Flash-Lite** qua contract và khớp annotation; UTC `2026-11-08T02:55:17.421354+00:00`. Raw nằm ngay trong Deep-Dive.
+- Lượt core cuối: **3/3 raw Gemini 3.5 Flash-Lite** qua contract và khớp annotation; UTC `2026-11-08T03:16:47.298345+00:00`. Raw nằm ngay trong Deep-Dive.
 - Gemini 2.5 Flash có response thật; LF-1 thiếu dấu ngoặc ở tag. LF-2 có hai response core đạt và các lượt HTTP 429. Không nhận kết quả Lite là đã hoàn tất ba ca cuối trên 2.5 Flash. Xem bảng tất cả lượt ở báo cáo.
-- **Bộ chấm gốc: 9,50/10; exit 1.** Check System Prompt chỉ tìm `draft_only`, `5%`, `dispatch_mobile_charger`; đề tài mới chỉ có keyword đầu nên nhận 0,5/1 ở check đó. Bốn check code còn lại đạt. Grader được giữ nguyên, không nhét keyword ngoài đề tài vào prompt và không nhận 9,50 là điểm chính thức.
+- **Grader đã điều chỉnh: 10,00/10; exit 0.** Thay check keyword pin bằng kiểm chỉ thị và 10 response vi phạm độc lập (tag, source, approval, schema, action). Giữ trọng số và bốn check code còn lại. Grader gốc từng trả 9,50/10; log cũ giữ nguyên. Đây là điểm kỹ thuật từ grader được điều chỉnh trong repo, không tự nhận là điểm chính thức của giảng viên.
+- **122/122 test offline đạt:** 92 test prototype + 30 test grader. Bộ test grader kiểm cả validator bị làm yếu, luôn nhận, luôn từ chối và crash; không chỉ kiểm happy path.
 - Thời gian vận hành, volume, acceptance của lễ tân và ROI **chưa đo/chưa tính**. Không dùng AI dự đoán số liệu. Chưa có reviewer nghiệp vụ xác nhận annotation hoặc workflow.
 
 ```powershell
 # Chỉ kiểm sự tồn tại file, không gọi API
 .\.venv\Scripts\python.exe autograder/autograder.py --section-a
-# Full grader có gọi model và có check cứng đề tài cũ; xem giới hạn ở trên
+# Lặp lại lượt 10/10: chọn model đã dùng tường minh; full grader gọi API thật
+$env:GEMINI_MODEL="gemini-3.5-flash-lite"
+.\.venv\Scripts\python.exe autograder/autograder.py
+Remove-Item Env:\GEMINI_MODEL
 ```
 
 Tests, log/JUnit và công cụ tạo PDF giữ local theo yêu cầu gói nộp gọn. Ba raw responses và thông tin nguồn được nhúng trong báo cáo để reviewer đối chiếu. Nhánh cá nhân chứa code; không đưa code cá nhân vào main. Bản nhóm/demo Xanh SM đã soạn trước đây là đề tài cũ, chưa tự động đổi theo bài cá nhân này.

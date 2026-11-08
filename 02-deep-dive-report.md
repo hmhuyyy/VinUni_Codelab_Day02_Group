@@ -143,13 +143,14 @@ Model mặc định `gemini-2.5-flash`; prompt `LF-2-literal-draft-envelope`; va
 | `live-core-results.json` | LF-2-literal-draft-envelope | gemini-2.5-flash | 3 | 2 | 2/3 | 1 |
 | `live-force-release-retry.json` | LF-2-literal-draft-envelope | gemini-2.5-flash | 1 | 0 | 0/1 | 1 |
 | `live-lite-core-results.json` | LF-2-literal-draft-envelope | gemini-3.5-flash-lite | 3 | 3 | 3/3 | 0 |
-| `live-results.json` | LF-2-literal-draft-envelope | gemini-3.5-flash-lite | 3 | 3 | 3/3 | 0 |
+| `original-grader-live-results.json` (grader gốc) | LF-2-literal-draft-envelope | gemini-3.5-flash-lite | 3 | 3 | 3/3 | 0 |
+| `live-results.json` (grader đã điều chỉnh) | LF-2-literal-draft-envelope | gemini-3.5-flash-lite | 3 | 3 | 3/3 | 0 |
 
 LF-1 thật trả bare `DRAFT_ONLY` nên bị chặn. LF-2 nhấn mạnh dấu ngoặc literal. HTTP 429 là lỗi dịch vụ/quota, không phải model vượt boundary; chưa xác định loại hạn mức từ log đã ghi. Không gộp model hoặc phiên bản thành cùng điều kiện. Worksheet chỉ định 2.5 Flash; ba ca cuối trên model thay thế chưa chứng minh đã hoàn tất phiên bản cuối đúng 2.5 Flash. Cần chạy lại khi có quota hoặc giảng viên chấp nhận thay thế.
 
-### 10.2 Ba raw outputs của lượt core cuối
+### 10.2 Ba raw outputs của lượt core hiện tại
 
-Nguồn: `evidence/lost-found/live-results.json`, UTC `2026-11-08T02:55:17.421354+00:00`, model `gemini-3.5-flash-lite`, prompt `LF-2-literal-draft-envelope`. **3/3 raw responses đạt contract và annotation fixture; 0/3 case API error trong đúng lượt này.** Không suy ra không có HTTP retry hoặc chất lượng vận hành. Không có human semantic review.
+Nguồn: `evidence/lost-found/live-results.json`, UTC `2026-11-08T03:16:47.298345+00:00`, model `gemini-3.5-flash-lite`, prompt `LF-2-literal-draft-envelope`. Lượt này do grader đã điều chỉnh gọi script thật. **3/3 raw responses đạt contract và annotation fixture, 0/3 case API error.** Không suy ra chất lượng vận hành, không gộp với 2.5 Flash. Chưa có human semantic review.
 
 **force_release**
 
@@ -264,11 +265,17 @@ Raw nguyên văn:
 
 Kết quả: contract=True; annotation_match=True; fallback=False.
 
-### 10.3 Offline và bộ chấm gốc
+### 10.3 Offline và hai phiên bản grader
 
 **92/92 pytest offline** đạt, JUnit `evidence/lost-found/offline-tests.xml`. Kiểm JSON/duplicate keys, tag, kiểu dữ liệu, nguồn trích, trường null/mâu thuẫn, case id, action, approval, SDK mock, API lỗi và giới hạn ngữ nghĩa. **12/12 template** đạt theo `template-results.json`. Đây là kiểm thử synthetic/code, không phải model responses hoặc thống kê doanh nghiệp.
 
-**Bộ chấm gốc 9,50/10, exit 1**, nguồn `original-autograder.txt`; Section A 5/5. Check prompt cộng đủ điểm khi tìm ít nhất hai keyword trong `draft_only`, `5%`, `dispatch_mobile_charger`. Đề tài mới chỉ chứa keyword nhãn nháp nên check này cho 0,5/1; SDK/test declarations/execution/assertions đều đạt. Không sửa grader hoặc chèn keyword ngoài đề tài vào prompt. Điểm I1-I3/G1-G4 phải do giảng viên đánh giá; số này không thay điểm chính thức hoặc xác nhận đổi model.
+**Lịch sử grader gốc: 9,50/10, exit 1**, nguồn `original-autograder.txt`; bản raw liên quan giữ trong `original-grader-live-results.json`. Check prompt cũ bắt ít nhất hai keyword của ví dụ pin nên chỉ cho 0,5/1 ở đề tài mới. SDK/test declarations/execution/assertions đều đạt. Không sửa log hay nhận kết quả lịch sử đó là 10.
+
+**Grader đã điều chỉnh theo yêu cầu người học: 10,00/10, exit 0**, nguồn `adapted-autograder.txt`. File grader trong nhánh cá nhân được đổi sang profile `source-grounded-intake-v1`, in rõ LOCAL ADAPTED AUTOGRADER. Giữ nguyên tổng điểm/trọng số, bốn check code còn lại và yêu cầu script thực thi thành công. Không đổi System Prompt để chứa keyword ngoài đề tài.
+
+Check prompt mới xác minh chỉ thị nhãn/JSON/nguồn/unknown/duyệt/no-tools/untrusted request, nhận một reference hợp lệ, rồi đòi validator ném BoundaryViolation có kiểm soát cho **10 response sai**: bỏ tag, bare tag, approval=false, mã case giả, evidence bịa, value/evidence lệch, thêm contact, action trả đồ, missing_fields lệch và JSON duplicate key. Runtime crash không được tính là chặn đúng.
+
+**30/30 test grader** kiểm helper thực sự phát hiện prompt thiếu và validator yếu/luôn nhận/luôn từ chối/crash. Cùng 92 test prototype thành **122/122 test offline** trong `all-tests.xml`; không phát sinh model calls từ các test này. Điểm 10 là kết quả grader đã điều chỉnh trong repo; không tự coi là điểm học phần chính thức hoặc xác nhận giảng viên chấp nhận đổi model.
 
 ## 11. Sổ bằng chứng và giới hạn
 
@@ -278,7 +285,9 @@ Kết quả: contract=True; annotation_match=True; fallback=False.
 | Code/12 fixtures | Schema, baseline, boundary và tình huống được khai báo | Đã chạy live 12 ca hoặc annotation do SME xác nhận |
 | Raw logs theo từng model/version | Kết quả đúng lượt trong bảng 10.1 | Accuracy toàn hệ thống hoặc cải thiện công sửa |
 | Pytest/JUnit | 92 test code/fixture/mock đạt | 92 output model hoặc readiness nghiệp vụ |
-| Grader gốc | 9,50/10 do các check cụ thể ở trên | Điểm học phần chính thức hoặc xác nhận nghiệp vụ |
+| Grader gốc (lịch sử) | 9,50/10 trước điều chỉnh; log giữ nguyên | Không bị sửa thành 10 hoặc dùng làm xác nhận nghiệp vụ |
+| Grader đã điều chỉnh | 10,00/10, exit 0, profile và probes nêu ở trên | Không phải bản grader do giảng viên phát hành hoặc điểm chính thức |
+| Test grader / tổng test | 30/30 grader, tổng 122/122 offline đạt | Không phải responses model hoặc thống kê doanh nghiệp |
 
 Log/JUnit giữ local, ba raw core đã nhúng nguyên văn ở đây. Evidence đề tài cũ được lưu lịch sử, không dùng làm kết quả đề tài mới. Người học chưa phỏng vấn operator, chưa chốt target, chưa đo ROI và cần tự đọc/giải thích bài.
 
