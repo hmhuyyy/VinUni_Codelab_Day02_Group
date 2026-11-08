@@ -30,7 +30,7 @@ Không sử dụng bài toán sự cố pin của worked example. Năm pain poin
 | Workflow hiện tại, 5 bước | Nhận ghi chú → kiểm trường/căn cứ → nhập phiếu → hỏi lại phần thiếu/mâu thuẫn → người duyệt và ghi sổ |
 | Bottleneck | Tách trường/đối chiếu và vòng hỏi lại là giả thuyết; thời gian từng bước và tổng chưa đo |
 | Điểm hỗ trợ | Trích ba trường nguyên văn, gắn evidence, đánh dấu thiếu; người quyết định nội dung cuối |
-| Metric có số đã đo | 12/12 fixture template; 3/3 raw core model thay thế khớp annotation synthetic. AHT/acceptance/chi phí thực chưa đo |
+| Metric kỹ thuật trên fixture | 12/12 fixture template; 3/3 raw core model thay thế khớp annotation synthetic. Người học xác nhận chưa có dữ liệu nghiệp vụ; AHT/acceptance/chi phí thực và ngưỡng thành công chưa có |
 | Kiến trúc | Rule/biểu mẫu là baseline; LLM Feature thử cho ghi chú tự do; chưa cần Agent |
 | Boundary | Không suy chủ sở hữu, thêm liên hệ, trả/gửi đồ hoặc ghi sổ thật. Thiếu/mâu thuẫn → người xác minh |
 | Còn thiếu | Biểu mẫu/SOP được phép, dữ liệu đã xử lý định danh, baseline, reviewer và owner xác nhận |

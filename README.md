@@ -59,6 +59,8 @@ Nguyên đã có bài nguồn; các nhiệm vụ review khác là đề xuất, 
 - Code lớp của Nguyên: 82 test, raw core 3/3, grader gốc 10/10 trong điều kiện model được ghi rõ. Không nhận đây là cả nhóm chạy lại, không sử dụng điểm từ grader từng tự sửa.
 - Còn thiếu business: baseline/volume/acceptance/chi phí, SOP/owner/reviewer xác nhận; giữ NOT YET pilot. Thời gian/ROI chưa đo/chưa tính.
 
+Người học xác nhận ngày 08/11/2026 chưa có dữ liệu nghiệp vụ thực tế. Các tỷ số trên là số đếm từ kiểm thử synthetic: 9/9 gồm một field null đúng; 8/8 là các field không-null có quote. 92 và 82 là test offline của hai prototype, không phải lượt gọi model hoặc mẫu doanh nghiệp. Xem Deep-Dive mục 2.2 và 4.2 để thu baseline và chốt ngưỡng thật; phần thời gian/impact định lượng của G1-G2 vẫn cần bằng chứng này.
+
 ## Checklist bàn giao và nộp bài
 
 - [x] Có lựa chọn candidate và danh sách trưởng nhóm/thành viên từ người dùng.

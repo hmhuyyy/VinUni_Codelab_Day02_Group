@@ -49,7 +49,15 @@ Tách AHT_active (công thao tác), thời gian chờ làm rõ và T_wall (nhậ
 
 Ghi theo case và bước: mã case giả danh, người/nguồn được phép, thời điểm nhận/giao/hoàn tất, active intervals, waiting intervals, số vòng hỏi lại, lỗi và lý do. AHT_active = tổng khoảng operator thực sự thao tác trên case; T_wall = thời điểm hoàn tất trừ nhận; W ghi riêng theo nguồn chờ. Khi xử lý song song không cộng wall-time thành công lao động. Thu cả case fallback/khó và quy định cùng điểm bắt đầu/kết thúc giữa manual, form và LLM.
 
-Ops/Data chốt kỳ đo/cỡ mẫu dựa trên dữ liệu và mục đích đánh giá. Hiện chưa có timestamp doanh nghiệp nên tất cả thời gian ở bảng vẫn “chưa đo”; không gán số bằng AI. Phiếu thu dữ liệu mẫu có ở hướng dẫn trưởng nhóm local.
+Ops/Data chốt kỳ đo/cỡ mẫu dựa trên dữ liệu và mục đích đánh giá. Ngày 08/11/2026, người học xác nhận chưa có dữ liệu nghiệp vụ thực tế. Vì vậy thời gian từng bước, tổng thời gian và tỷ trọng bottleneck vẫn chưa đo; G1 hiện có mô hình và kế hoạch đo, chưa có bằng chứng hoàn thành phần thời gian thực đo. Không điền số AI dự đoán hoặc lấy độ trễ API làm thời gian nghiệp vụ.
+
+Phiếu thu baseline dưới đây chưa có bản ghi; hàng trạng thái không phải một case quan sát:
+
+| Case giả danh / nguồn được phép | Phương án | Bước B1-B5 | Nhận / hoàn tất | Khoảng thao tác thực | Khoảng chờ / lý do | Vòng hỏi lại / lỗi | Người xác nhận |
+|---|---|---|---|---|---|---|---|
+| Chưa thu dữ liệu | Chưa thực hiện | Chưa đo | Chưa đo | Chưa đo | Chưa đo | Chưa đo | Chưa xác nhận |
+
+Sau khi thu, tính trung bình thời gian thao tác từng bước trên các case có dữ liệu hợp lệ, ghi rõ cỡ mẫu và khoảng thời gian quan sát. Tổng công thao tác/case là tổng active intervals; thời gian nhận đến hoàn tất được báo riêng. Chỉ kết luận bottleneck sau khi so số đo từng bước, thời gian chờ và vòng hỏi lại; không chọn B2/B3 làm kết luận có sẵn.
 
 ## 3. Problem Statement sáu trường — G2
 
@@ -59,7 +67,7 @@ Ops/Data chốt kỳ đo/cỡ mẫu dựa trên dữ liệu và mục đích đ�
 | Current Workflow | Nhận → kiểm nguồn/trường → nhập phiếu → hỏi lại → duyệt/ghi; thời gian chưa đo |
 | Bottleneck | Tách thông tin, nhập lại và hỏi lại là giả thuyết cần quan sát; chưa xếp hạng định lượng |
 | Business Impact | Thiếu/mâu thuẫn có thể làm phiếu khó bàn giao; chưa có volume, lỗi, SLA, công sửa hoặc chi phí thực để định lượng |
-| Success Metric | Đã đo trên fixture: 12/12 template; core cuối 3/3 raw model khớp annotation, ba trường/ca. Metric vận hành cần đo là acceptance, thời gian sửa và lỗi theo trường; chưa có target được owner chốt |
+| Success Metric | Metric nghiệp vụ cần đo: AHT_active/case, công sửa, acceptance và lỗi theo trường trên cùng tập case. Baseline và ngưỡng thành công chưa có, cần Ops owner xác nhận trước đánh giá. Kết quả kỹ thuật synthetic ở mục 4.1 là bằng chứng phụ trợ, không thay mục tiêu nghiệp vụ |
 | Operational Boundary | Chỉ tạo phiếu nháp với trích dẫn nguyên văn. Không suy chủ, thêm liên hệ, xác nhận trả đồ, ghi sổ/gửi tin/thu phí; thiếu/mâu thuẫn/lỗi → người xác minh |
 
 **Một câu:** kiểm chứng liệu trích trường có nguồn và chỉ ra khoảng trống trong ghi chú đồ nhặt được có giúp lễ tân chuẩn bị phiếu tốt hơn form/rule, với mọi xác nhận nghiệp vụ thuộc con người.
@@ -91,6 +99,20 @@ Rubric người dùng: **Q1** trường có nguồn và đúng ghi chú; **Q2** 
 | AHT, acceptance, SLA, chi phí/ROI | Chưa đo/chưa tính | Không điền 0 hoặc giá trị dự đoán thay dữ liệu |
 
 Các tỷ số trên mô tả mẫu synthetic development, không là thống kê Vinpearl. Reviewer phải kiểm Q1-Q4; nguồn quote đúng không đồng nghĩa đúng nhãn field hoặc người nhận có quyền với tài sản.
+
+**Đơn vị đếm:** 9/9 gồm một field null được chú thích đúng; 8/8 chỉ tính tám field có giá trị và evidence. Ba ca live là ba ca lõi trong bộ 12 fixtures. Không cộng các mẫu số này thành số ca độc lập. 92 là số test offline phụ trợ, không phải 92 phản hồi model; 82 test của bài code lớp được ghi riêng. Tổng 174 = 92 + 82 chỉ là số test offline của hai prototype, không là cỡ mẫu nghiệp vụ hoặc số lượt API.
+
+### 4.2 Metric nghiệp vụ chờ dữ liệu và người chốt ngưỡng
+
+| Metric | Cách tính khi có dữ liệu | Baseline / ngưỡng hiện tại |
+|---|---|---|
+| AHT_active/case | Tổng công thao tác thực trên các case / số case hợp lệ, ghi đơn vị và cùng điểm bắt đầu/kết thúc | Chưa đo / chưa chốt |
+| Công sửa/case | Tổng thời gian reviewer thực sự sửa / số case đánh giá, kể cả case chuyển manual | Chưa đo / chưa chốt |
+| Acceptance | Số case được reviewer chấp nhận theo Q1-Q4 / toàn bộ case được giao đánh giá; ghi riêng fallback và lỗi API | Chưa đo / chưa chốt |
+| Lỗi theo trường | Số field sai/thiếu so nhãn reviewer / số field cần đánh giá; ghi riêng null đúng và null sai | Chưa đo / chưa chốt |
+| Business Impact | Chỉ quy đổi công thao tác, volume và chi phí từ số đo cùng kỳ, cùng phạm vi và đơn giá được xác nhận | Chưa có dữ liệu; chưa tính tiết kiệm hoặc ROI |
+
+Ops owner chịu trách nhiệm chốt ngưỡng trước lượt đánh giá, Data/reviewer xác nhận định nghĩa và nhãn. Mẫu ghi nhận gồm: metric, đơn vị, baseline, nguồn/cỡ mẫu/kỳ đo, ngưỡng được duyệt và người/ngày chốt. Hiện chưa có ngưỡng được duyệt; không thay bằng số AI đặt hoặc coi kết quả 3/3 synthetic là ngưỡng nghiệp vụ.
 
 ## 5. AI Fit & Future-State — G3
 
@@ -132,13 +154,15 @@ Contract sau thuộc thử nghiệm Vinpearl phụ trợ, không phải contract
 
 R thực hiện, A chịu trách nhiệm chốt, C tham vấn, I được biết. Đây là vai trò đề xuất, chưa có cam kết người phụ trách doanh nghiệp.
 
-| Công việc | Lễ tân | Trưởng tiền sảnh / Ops | AI/Data | Risk/Platform |
+| Công việc | Lễ tân / Trưởng ca | Ops owner (Trưởng tiền sảnh) | AI/Data | Risk/Platform |
 |---|---|---|---|---|
 | Chốt workflow, biểu mẫu, baseline | R | A | C | C |
 | Dữ liệu/nhãn/đánh giá | R | A | R | C |
 | Code/validator/log | C | A | R | C |
 | Duyệt phiếu và ghi nhận | R | A | I | C |
 | Dừng LLM / về manual | R | A | C | R |
+
+Thống nhất với bản một trang: **Ops owner là A** cho duyệt/ghi nhận; lễ tân/trưởng ca thực hiện và duyệt tác nghiệp theo phân quyền, thuộc **R**. Đây là RACI đề xuất để doanh nghiệp xác nhận, không phải bằng chứng đã có uỷ quyền hoặc SOP thật.
 
 ## 8. Business case và Readiness — G4
 

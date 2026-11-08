@@ -23,6 +23,7 @@ Nguồn chính: [bài cá nhân Nguyên đã khắc phục lỗi grader/prototyp
 | Template đã qua các fixture | Phản biện giá trị tăng thêm LLM | Form/rule ưu tiên, chưa kết luận LLM tạo hiệu quả |
 | Sai phạm vi code/grader ở phiên trước | Kế thừa bản cá nhân đã sửa đúng | Bài code cố định tách khỏi business, grader nguyên bản; không mang `.py` cá nhân vào main |
 | Người dùng sau đó yêu cầu push bản nhóm lên main | Cập nhật trạng thái bàn giao và chuẩn bị commit sáu file báo cáo | Kiểm Section A và diff trước khi push; giữ nguyên code, grader và các nhánh cá nhân |
+| Người học xác nhận chưa có dữ liệu thực tế và yêu cầu không AI dự đoán | Làm rõ phần G1-G2 chưa có bằng chứng, bổ sung phiếu thu và định nghĩa metric; thống nhất RACI | Replay raw và 12 template offline, đếm lại XML kiểm thử; không tạo thời gian/impact/target giả |
 
 ## 3. Những kết luận AI không được tự tạo
 
@@ -37,6 +38,8 @@ Nguồn chính: [bài cá nhân Nguyên đã khắc phục lỗi grader/prototyp
 Điểm đáng giữ là chọn scope hẹp và sẵn sàng NOT YET khi thiếu dữ liệu/owner, kiểm form/rule trước LLM, tách quyền soạn phiếu khỏi quyền ghi sổ/trả đồ. Nhóm cần dùng bản này để đọc chéo và hiểu quyết định, không thay việc thành viên tự giải thích bài của mình.
 
 3 raw business/12 template/92 tests phụ trợ được kế thừa từ Nguyên; 82 tests và grader gốc10/10 là phần code lớp riêng. Trợ lý rà lại raw/template offline khi tổng hợp; không có lời gọi Gemini mới hoặc vận hành thật trong việc dựng gói nhóm. Chưa có operator review, baseline hoặc khảo sát tập thể.
+
+Lượt đối chiếu thống kê giữ nguyên log gốc: 3/3 case, 9/9 field slots gồm một null đúng, 8/8 quote không-null, 1/1 field thiếu và 12/12 template khớp. Đếm lại JUnit có 92 test phụ trợ và 82 test code lớp, tổng 174 test offline; không nhận đã chạy thêm 174 lượt model. RACI bản một trang được sửa: Ops owner là A, lễ tân/trưởng ca là R ở duyệt/ghi nhận, đồng nhất mục 7 báo cáo. G1-G2 còn thiếu số liệu nghiệp vụ thật; NOT YET vẫn có hiệu lực.
 
 ## 5. Trạng thái bàn giao
 
