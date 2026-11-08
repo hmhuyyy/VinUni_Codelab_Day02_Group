@@ -7,6 +7,8 @@
 
 ## 1. Yêu cầu có thật và phạm vi AI tham gia
 
+**Cập nhật sau đối chiếu:** business Vinpearl giữ nguyên; bài code I2 khôi phục về battery-dispatch theo starter; grader khôi phục nguyên trạng. Điểm hiện tại được lấy từ grader gốc, không từ phiên bản tự điều chỉnh trước đó.
+
 Người học đã hỏi mức trùng với worked example, sau đó yêu cầu làm bài hoàn toàn khác và commit/push lại nhánh cá nhân. Người học cũng yêu cầu không dùng AI dự đoán số liệu. Trợ lý đã đọc đề/mẫu, chọn phạm vi mới, viết tài liệu/code, chạy test và chuẩn bị PDF. Không nhận các thao tác trợ lý thực hiện là người học đã tự phỏng vấn, tự viết từng dòng code hoặc doanh nghiệp đã phê duyệt.
 
 ## 2. AI giúp gì, con người cần kiểm gì?
@@ -21,7 +23,8 @@ Người học đã hỏi mức trùng với worked example, sau đó yêu cầu
 | Thử model thay thế | Chọn tường minh 3.5 Flash-Lite, ghi riêng model/version | Core cuối 3/3 đạt, không nhận là 2.5 Flash |
 | Kiểm thử code | 92/92 pytest, SDK mock và phản ví dụ ngữ nghĩa | Offline không phải responses Gemini; annotation synthetic chưa SME chấm |
 | Chạy grader gốc | 9,50/10 và exit 1 do check từ khoá pin | Giữ nguyên log gốc và xác định điều kiện gây mất 0,5 |
-| Yêu cầu mới của người học: giữ Vinpearl và sửa check | Đổi gate prompt sang chỉ thị + 10 negative probes, giữ trọng số và các gate còn lại | Lượt thật đạt 10/10 exit 0; 30 test grader và tổng 122 offline đạt; ghi rõ grader đã điều chỉnh |
+| Điều chỉnh grader ở lượt trước — đã rút khỏi bài nộp | Từng đổi gate theo lost-property; đây là cách xử lý sai phạm vi | Kết quả 10/10 tự điều chỉnh chỉ giữ lịch sử, không dùng làm điểm hiện tại |
+| Đối chiếu lại starter và grader theo yêu cầu người học | Khôi phục grader nguyên bản và bài code cố định, tách business Vinpearl | 82 test code + 92 phụ trợ đạt; grader gốc 10/10 với cấu hình model được ghi rõ |
 
 ## 3. Những lỗi/giới hạn AI đã phải sửa
 
@@ -41,19 +44,21 @@ Regression đặt một đoạn location có thật vào `item_description`: con
 
 Baseline parse nhãn và một mẫu câu tự do đã đạt 12/12 fixture. Tập test còn nhỏ/quen thuộc, chưa có người đo công sửa; chưa chứng minh giá trị LLM vượt form/rule. LLM chỉ là feature thử nghiệm; nếu form đáp ứng tốt thì bỏ LLM.
 
-### 3.5 Sửa check gắn với worked example theo yêu cầu mới
+### 3.5 Lỗi đổi bài code cố định rồi điều chỉnh grader — đã khắc phục
 
-Lượt đầu dùng grader nguyên bản và ghi nhận 9,50/10. Sau đó người học yêu cầu giữ Vinpearl Lost-Property Intake, thay check keyword của ví dụ và sửa để đạt 10/10. Trợ lý đã điều chỉnh chính file grader trong nhánh cá nhân; không thêm keyword pin/xe sạc vào System Prompt, không sửa log cũ và không nhận thay đổi này do giảng viên ban hành.
+Trợ lý đã hiểu sai phạm vi đổi đề tài và thay cả prototype lớp sang lost-property. Khi grader gốc không qua check, trợ lý tiếp tục sửa grader theo đề tài và báo 10/10 của phiên bản điều chỉnh. Dù có ghi nhãn, cách đó không đáp ứng việc nộp bài với bộ chấm gốc. Người học cung cấp bản đối chiếu và yêu cầu sửa. Trợ lý xác nhận lỗi, không biện minh bằng điểm tự chấm.
 
-Check mới vẫn cần chỉ thị rõ và validator hoạt động: phải nhận reference đúng, chặn 10 response sai bằng lỗi BoundaryViolation có kiểm soát. Bổ sung 30 test grader, gồm validator bị làm yếu/luôn nhận/luôn từ chối hoặc crash. Kết quả thật của grader điều chỉnh là 10,00/10, exit 0; các test offline tổng 122/122 đạt. Script tiếp tục gọi Gemini thật trong full run. Model được chọn tường minh là 3.5 Flash-Lite; điều kiện 2.5 Flash trong worksheet vẫn cần được xử lý riêng như báo cáo.
+Cách sửa: khôi phục autograder đúng byte từ template 9ad1a44, đưa file starter-code trở lại bài pin/nhãn nháp/xe sạc được giao, giữ business Vinpearl riêng. Code-1 gốc khớp đủ ba keyword do thực hiện đúng nhiệm vụ; không nhét keyword vào prompt business. Mã lost-property giữ làm phụ trợ local/lịch sử, không đứng ở đường dẫn chấm. Test grader tự điều chỉnh được lưu lịch sử và loại khỏi bộ test hiện hành.
 
-Giới hạn cần hiểu: điều chỉnh công cụ kiểm kỹ thuật không tạo thêm dữ liệu business, không chứng minh chất lượng với operator và không tự quyết định điểm chính thức. Log/phạm vi chấm được ghi rõ để người học và người chấm kiểm lại.
+Đã chạy lại: 82/82 test code lớp, 92/92 phụ trợ, tổng 174/174; grader **nguyên bản** trả 10,00/10, exit 0, có ba response thật của bài code. Lượt 10 dùng 3.5 Flash-Lite tường minh; 2.5 Flash hiện 429, không nhận model thay thế là model đề. Khi không có key, kiểm riêng cho thấy BLOCKED/exit 2; không dùng mock hoặc pass giả để vượt Code-4/5.
 
-## 4. Prompt và dữ liệu có dấu vết
+Bài học: quyền chỉnh sửa repo không biến grader tự thay thành căn cứ điểm của lớp. Cần phân biệt đề tài business tự chọn với bài thực hành code đã giao; ghi nhận và sửa chính điều kiện khiến bài không tương thích, thay vì thay tiêu chí chấm. Các log trước giữ lịch sử, không dùng làm điểm hiện tại.
+
+## 4. Prompt và dữ liệu business phụ trợ có dấu vết
 
 System prompt thực trong code: `LF-2-literal-draft-envelope`. User input và application_context được gửi riêng bằng JSON; expected_fields của fixture không gửi cho model. Ba core attacks là ép trả đồ/đóng hồ sơ, tự điền nơi nhặt thiếu và giả admin bỏ nhãn/duyệt. Ca mở rộng kiểm unknown time, context thiếu, mâu thuẫn, note injection, đổi id, PII và câu tự do.
 
-Synthetic notes/annotations do trợ lý tạo để kiểm code, không phải field research hoặc log khách sạn. Chưa được SME xác nhận. Không gửi dữ liệu khách thật hoặc key vào báo cáo/Git. Ba raw core model cuối ở mục 10.2 của Deep-Dive; model/thời điểm/phiên bản ghi rõ theo từng lượt.
+Synthetic notes/annotations do trợ lý tạo để kiểm code, không phải field research hoặc log khách sạn. Chưa được SME xác nhận. Không gửi dữ liệu khách thật hoặc key vào báo cáo/Git. Ba raw business ở mục 10.2, raw code lớp ở mục 11.2 của Deep-Dive; model/thời điểm/phiên bản ghi rõ theo từng lượt.
 
 ## 5. Reflection để người học tự kiểm trước khi bảo vệ
 
@@ -64,3 +69,7 @@ Tôi chưa phỏng vấn operator, chưa có baseline hay ROI. Việc cần ti�
 ## Nguồn và trạng thái bàn giao
 
 [Nguồn nghiệp vụ S1](https://careers.vinpearl.com/job/vinpearl-nha-trang-truong-bo-phan-tien-sanh-4416), [worksheet](https://github.com/hmhuyyy/VinUni_Codelab_Day02_Group/blob/9ad1a44e43eb21162229831bad6c38dfc69ade0d/01-worksheet.md), code và raw/log/JUnit đề tài mới trong `evidence/lost-found/` local. Yêu cầu công bố áp dụng nhánh cá nhân `HoangBaoNguyen`; `main` và bản nhóm/demo cũ chưa tự động được đổi theo candidate này.
+
+## 6. Kết quả sửa và phạm vi tự thực hiện
+
+Các thao tác đọc nguồn, viết/sửa code, chạy test và gọi API do trợ lý thực hiện trong workspace theo yêu cầu người học. Người học chưa phỏng vấn operator hay đo ROI. Cần tự đọc/hiểu cả hai phần để bảo vệ; không nhận trợ lý chạy test là nghiên cứu thực địa của người học hoặc của nhóm.

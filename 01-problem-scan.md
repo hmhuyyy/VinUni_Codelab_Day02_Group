@@ -7,6 +7,8 @@
 
 ## 1. Phạm vi và nguồn
 
+**Phạm vi file này là business Vinpearl.** Thử nghiệm lost-property được dùng làm bằng chứng phụ trợ; bài code cố định I2 vẫn là battery-dispatch trong `starter-code/prompt_prototype.py`, chấm bằng grader gốc.
+
 Không sử dụng bài toán sự cố pin của worked example. Năm pain points sau là giả thuyết discovery, không phải kết quả phỏng vấn. Không có thời gian/volume/chi phí hoặc tỷ lệ cải thiện do AI dự đoán. Chỉ P1 có nguồn công khai xác nhận sự tồn tại của nhiệm vụ đồ thất lạc; workflow chi tiết và pain vẫn cần xác minh.
 
 ## 2. SCAN — đủ bốn lenses
