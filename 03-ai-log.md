@@ -10,14 +10,14 @@ Tôi dùng AI như một người cùng động não để liệt kê các vấn
 
 Những gợi ý ban đầu có các con số cụ thể như số phút xử lý mỗi trường hợp và tỷ lệ hủy chuyến nhưng không có dữ liệu công ty làm bằng chứng. Tôi xem chúng là chưa được xác minh, bỏ các khẳng định về số liệu ban đầu không có căn cứ và đánh dấu những mục tiêu còn lại là giả thuyết cần đo. Tôi cũng nhận ra ý tưởng ban đầu về điểm đón của Xanh SM không khớp với tình huống pin yếu/sạc di động trong mã khung. Tôi điều chỉnh bài toán được chọn cho phù hợp với bản mẫu và đổi kiến trúc sang dùng quy tắc xác định cho ngưỡng pin và khoảng cách; mô hình ngôn ngữ lớn chỉ soạn phần giải thích.
 
-Lần chạy đầu cũng cho thấy tệp khung chưa có phần gọi API. Sau khi bổ sung, tôi gặp lỗi phiên bản API; đổi cấu hình ứng dụng Gemini sang `v1beta` đã khắc phục lỗi đó. Hai bài kiểm thử đối kháng tôi chạy sau đó đều đạt. Điều này cho tôi thấy kết quả tốt trên một vài ví dụ là bằng chứng hữu ích, nhưng không chứng minh câu lệnh an toàn hoặc sẵn sàng đưa vào sử dụng thực tế.
+Lần chạy đầu cũng cho thấy tệp khung chưa có phần gọi API. Sau khi bổ sung, tôi gặp lỗi phiên bản API; đổi cấu hình ứng dụng Gemini sang `v1beta` đã khắc phục lỗi đó. Khi chạy với Gemini 2.5 Flash, cả ba bài kiểm thử đối kháng đều PASS. Riêng bài kiểm thử pin yếu, mô hình trả về JSON đề xuất sạc di động đúng cấu trúc; bài kiểm thử thiếu dữ liệu yêu cầu xác minh và không khẳng định đã điều xe. Điều này cho tôi thấy kết quả tốt trên một vài ví dụ là bằng chứng hữu ích, nhưng không chứng minh câu lệnh an toàn hoặc sẵn sàng đưa vào sử dụng thực tế.
 
 ## Những điều tôi đã thay đổi
 
 - Đánh dấu chi tiết quy trình, ước tính thời gian và số liệu tác động là giả định cho đến khi có thể kiểm tra với nhân viên vận hành và nhật ký.
 - Giữ nhãn `[DRAFT_ONLY]` trong mọi phản hồi và nói rõ đề xuất điều xe không đồng nghĩa với việc xe đã được điều đi.
 - Đưa ngưỡng pin và khoảng cách trạm tối đa vào quy tắc xác định, thay vì dựa vào mô hình ngôn ngữ lớn để tự tính toán an toàn.
-- Thêm bài kiểm thử thiếu dữ liệu cảm biến/chèn lệnh vào câu lệnh và đặt chương trình trả về mã lỗi khác 0 khi kiểm tra thất bại. Tôi vẫn cần chạy bài kiểm thử mới bằng khóa API hợp lệ.
+- Thêm bài kiểm thử thiếu dữ liệu cảm biến/chèn lệnh vào câu lệnh và đặt chương trình trả về mã lỗi khác 0 khi kiểm tra thất bại. Tôi đã chạy cả ba bài kiểm thử bằng Gemini; các kiểm tra đã lập trình đều báo PASS.
 - Giữ bước phê duyệt của con người và phương án thủ công dự phòng trong quy trình đề xuất.
 
 ## Tự phản ánh
