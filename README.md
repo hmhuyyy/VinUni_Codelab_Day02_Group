@@ -1,207 +1,71 @@
-# 📖 Hướng Dẫn Học Viên (Student Guide) — Lab 02: AI Product Scoping
+# Báo cáo nhóm — Vinpearl Lost-Property Intake
 
-Tài liệu này hướng dẫn chi tiết cách thiết lập môi trường lập trình Python, cấu hình API Key, quy trình phân nhánh Git làm việc nhóm và chuẩn bị sản phẩm nộp bài cho **Lab 02: AI Product Scoping (Vin Smart Future)**.
+**Trưởng nhóm:** Hoàng Minh Huy / 2A202603495
+**Repository:** VinUni_Codelab_Day02_Group · **Ngày tổng hợp:** 08/11/2026
+**Candidate được chọn:** Vinpearl Lost-Property Intake, nguồn Hoàng Bảo Nguyên / 2A202603384.
+**Snapshot nguồn:** `d00c86a159113530f4103a07db705f419a42a63c` · **Trạng thái:** bản nhóm để nộp trên `main`; việc nộp form lớp chưa được xác nhận.
 
----
 
-## 🛠️ 1. Hướng dẫn thiết lập Môi trường ảo (`.venv`)
+## Thành viên và phạm vi xác nhận
 
-Môi trường ảo (virtual environment) giúp cô lập các thư viện của dự án này, tránh xung đột với các phiên bản thư viện khác cài trên máy của bạn.
+| Họ tên | MSSV | Vai trò đã xác nhận |
+|---|---|---|
+| Hoàng Minh Huy | 2A202603495 | Trưởng nhóm |
+| Bùi Quang Huy | 2A202603469 | Thành viên |
+| Lê Quang Vinh | 2A202603363 | Thành viên |
+| Hoàng Bảo Nguyên | 2A202603384 | Nguồn candidate được chọn |
 
-### 💻 Bước 1: Tạo môi trường ảo
-Mở terminal tại thư mục gốc của dự án (`VinUni_Day02-AI-Product-Lab`) và chạy lệnh tương ứng với hệ điều hành của bạn:
+Danh sách và trưởng nhóm do người dùng cung cấp. Trưởng nhóm đã chỉ định chọn bài Nguyên. Chưa nhận biên bản họp/đồng thuận đọc bản cuối của mọi thành viên; không gán đóng góp đã hoàn tất khi chưa được xác nhận.
 
-*   **Windows (PowerShell hoặc CMD):**
-    ```powershell
-    python -m venv .venv
-    ```
-*   **macOS / Linux:**
-    ```bash
-    python3 -m venv .venv
-    ```
+## Sáu file báo cáo nhóm trên main
 
-### 🔌 Bước 2: Kích hoạt (Activate) môi trường ảo
-Bạn phải kích hoạt môi trường ảo mỗi khi mở terminal mới trước khi chạy code.
+| File | Vai trò |
+|---|---|
+| [01-problem-scan.md](01-problem-scan.md) | Năm cơ hội, ba cards, phản biện và lựa chọn candidate |
+| [02-deep-dive-report.md](02-deep-dive-report.md) | Báo cáo G1-G4, metric có mẫu số, nguồn và gate |
+| [03-ai-log.md](03-ai-log.md) | Nhật ký tổng hợp nhóm, giúp/sai/sửa/kiểm và attribution |
+| [04-workflow-diagram.pdf](04-workflow-diagram.pdf) | Current/Future-state, handoff, bottleneck cần đo, HITL/fallback |
+| [05-one-page-artifact-pack.pdf](05-one-page-artifact-pack.pdf) | PS sáu trường, RACI-lite, Readiness, Decision, next experiment |
+| README.md | Thành viên, hướng dẫn review và bàn giao |
 
-*   **Windows (PowerShell):**
-    ```powershell
-    .venv\Scripts\Activate.ps1
-    ```
-    *(Nếu gặp lỗi "Execution Policy", hãy chạy lệnh: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process` rồi kích hoạt lại).*
-*   **Windows (CMD):**
-    ```cmd
-    .venv\Scripts\activate.bat
-    ```
-*   **macOS / Linux:**
-    ```bash
-    source .venv/bin/activate
-    ```
-*   **Dấu hiệu kích hoạt thành công:** Ở đầu dòng lệnh của terminal xuất hiện ký hiệu `(.venv)`.
+Chỉ cập nhật sáu file báo cáo này. Giữ nguyên tài liệu lớp và `.py` sẵn có trên main; không merge toàn bộ nhánh cá nhân, không đưa code/keys/tests/log thô/công cụ soạn thảo vào gói nhóm. Code I2 và kết quả cá nhân giữ ở nhánh từng người. Grader cá nhân của Nguyên đã khôi phục đúng bản lớp.
 
-### 📥 Bước 3: Cài đặt thư viện cần thiết
-Chạy lệnh sau để cài đặt SDK của Gemini và các thư viện hỗ trợ:
-```bash
-pip install google-genai google-generativeai pytest
-```
+## Bản đồ 60 điểm và cách review
 
----
+| Gate | Điểm | Bằng chứng cần đọc |
+|---|---:|---|
+| G1 Workflow | 20 | Deep-Dive mục 2/2.1/2.2 và PDF trang 1: 5 bước, actor/input/output, H1-H4, loop, active/wait, cách đo |
+| G2 PS | 20 | Mục 3-4/4.1: 6 trường, số đo kỹ thuật có nguồn/mẫu số, metric vận hành chưa đo, rubric Q1-Q4 |
+| G3 AI Fit | 10 | Mục 5-7 và PDF trang 2: form/rule/LLM/Agent, boundary, trigger/owner/fallback, điểm dừng quyền |
+| G4 Decision | 10 | Mục 8-9/12: nguồn/gap, readiness, GO synthetic / NOT YET pilot, gate có owner và stop rule |
 
-## 🔑 2. Thiết lập biến môi trường `GEMINI_API_KEY`
+Tập trung review G1+G2 vì chiếm 40/60 điểm; không điền số phút/volume/ROI do AI dự đoán để làm đủ bảng. Điểm 10/10 của **grader gốc cho code cá nhân** không thay điểm 60 nhóm. Section A trên main chỉ kiểm file, không chấm đủ nội dung G1-G4.
 
-Để code Python gọi được Gemini API, bạn cần khai báo khóa API của mình vào biến môi trường. **Lưu ý: Không được dán trực tiếp API Key vào code để tránh bị lộ khóa khi push lên GitHub.**
+## Phân công review đề xuất — chưa phải việc đã hoàn tất
 
-Hãy mở terminal đã kích hoạt `(.venv)` và chạy lệnh nạp khóa tương ứng:
+| Người | Phần việc cần nhận | Dấu vết xác nhận cần có |
+|---|---|---|
+| Hoàng Minh Huy | Chốt scope/Decision, điều phối đọc chéo, review diff main và form | Quyết định bản cuối và biên bản review |
+| Bùi Quang Huy | Review G1: handoff/loop/cách đo | Nhận xét, lỗi đã sửa, xác nhận nội dung |
+| Lê Quang Vinh | Review G2: PS/metric/mẫu số và nguồn | Nhận xét và xác nhận số nào chưa đo |
+| Hoàng Bảo Nguyên | Giải thích nguồn candidate, evidence/AI Fit và prototype | Liên kết snapshot và trả lời câu hỏi về giới hạn |
 
-### 🪟 Trên Windows:
-*   **Nếu dùng PowerShell (Mặc định của VS Code / Cursor):**
-    ```powershell
-    $env:GEMINI_API_KEY="AIzaSyYourGeminiApiKeyHere"
-    ```
-*   **Nếu dùng Command Prompt (CMD):**
-    ```cmd
-    set GEMINI_API_KEY=AIzaSyYourGeminiApiKeyHere
-    ```
+Nguyên đã có bài nguồn; các nhiệm vụ review khác là đề xuất, chưa đánh dấu đã thực hiện. Mỗi thành viên vẫn cần hoàn tất bài cá nhân trên nhánh riêng theo hướng dẫn lớp.
 
-### 🍎 Trên macOS / Linux:
-*   **Dùng Terminal:**
-    ```bash
-    export GEMINI_API_KEY="AIzaSyYourGeminiApiKeyHere"
-    ```
+## Bằng chứng và giới hạn
 
-### 🧪 Kiểm tra xem API Key đã nhận diện chưa:
-Chạy lệnh python nhanh này trong terminal để kiểm tra:
-```bash
-python -c "import os; print('API Key status: OK' if os.getenv('GEMINI_API_KEY') else 'API Key status: MISSING')"
-```
+- [Nguồn bài Nguyên đã sửa](https://github.com/hmhuyyy/VinUni_Codelab_Day02_Group/tree/d00c86a159113530f4103a07db705f419a42a63c): business Vinpearl; bài code I2 battery-dispatch riêng, grader nguyên bản.
+- Business phụ trợ: 3/3 raw trên `gemini-3.5-flash-lite`; 9/9 field slots khớp annotation, 8 trường không-null có quote trong nguồn; 12/12 template và 92 test phụ trợ. Đây là synthetic development data, không phải hiệu quả với lễ tân.
+- Code lớp của Nguyên: 82 test, raw core 3/3, grader gốc 10/10 trong điều kiện model được ghi rõ. Không nhận đây là cả nhóm chạy lại, không sử dụng điểm từ grader từng tự sửa.
+- Còn thiếu business: baseline/volume/acceptance/chi phí, SOP/owner/reviewer xác nhận; giữ NOT YET pilot. Thời gian/ROI chưa đo/chưa tính.
 
----
+## Checklist bàn giao và nộp bài
 
-## 👥 3. Quy định Làm bài và Nộp bài Nhóm (Group Workflow & Git Rules)
+- [x] Có lựa chọn candidate và danh sách trưởng nhóm/thành viên từ người dùng.
+- [x] Gói báo cáo theo đề tài mới, nguồn và kết quả hai phần được tách.
+- [ ] Các thành viên thực sự đọc/đối chiếu, xác nhận bản cuối và phần việc.
+- [ ] Trưởng nhóm xác nhận các bài cá nhân đã hoàn tất/push theo hướng dẫn lớp.
+- [x] Người dùng yêu cầu phát hành trên main; phạm vi cập nhật chỉ sáu file báo cáo. Section A và diff được kiểm trước khi push; code và grader lớp giữ nguyên.
+- [ ] Duy nhất Hoàng Minh Huy điền form lớp bằng tên trưởng nhóm và link repo sau khi main đã cập nhật.
 
-Môn học này áp dụng mô hình cộng tác nhóm kết hợp chấm điểm cá nhân và chấm điểm nhóm thông qua Git Branching.
-
-### 📌 Quy định chung:
-1. **Tổ chức Nhóm & Repository:**
-   * Mỗi nhóm gồm **4 đến 6 thành viên**.
-   * **Trưởng nhóm** chịu trách nhiệm khởi tạo Repository chung của nhóm và **thêm (add) tất cả các thành viên vào danh sách Contributors** với quyền write.
-   * Tất cả thành viên (bao gồm cả Nhóm trưởng) đều phải thực hiện làm bài trên **Branch riêng (nhánh cá nhân)** của mình.
-
-2. **Bài tập Code (`.py`) — Chấm điểm CÁ NHÂN:**
-   * Mỗi thành viên tự hoàn thành file code `.py` cá nhân của mình.
-   * Push file `.py` lên **branch cá nhân**.
-   * 🛑 **LƯU Ý QUAN TRỌNG:** **KHÔNG merge file code (`.py`) vào branch `main`**. Điểm nhóm sẽ **KHÔNG** tính cho các file code. Phần code `.py` sẽ được hệ thống/giảng viên chấm điểm độc lập trên từng branch cá nhân.
-
-3. **Bài tập Báo cáo/Tài liệu (`.md`) — Chấm điểm NHÓM:**
-   * Mỗi bạn tự hoàn thiện các file `.md` cá nhân trên branch riêng và push bài lên branch cá nhân đó.
-   * Sau khi **TẤT CẢ** các thành viên trong nhóm đã hoàn thành và push bài lên branch cá nhân, **Trưởng nhóm sẽ tổ chức họp/bàn luận với các thành viên** để review và chọn ra các ý tưởng hay nhất, file `.md` chất lượng nhất.
-   * Trưởng nhóm (hoặc đại diện nhóm) tổng hợp, chỉnh sửa và **merge các file `.md` xuất sắc nhất vào branch `main`**. Branch `main` là căn cứ duy nhất để tính điểm báo cáo chung cho toàn nhóm.
-
-4. **Điền Form Nộp bài chính thức:**
-   * 🛑 **QUAN TRỌNG:** Khi điền form nộp bài, **CHỈ CẦN TRƯỞNG NHÓM điền Họ tên và link Repository của nhóm**. 
-   * Các thành viên khác **VUI LÒNG KHÔNG ĐIỀN THÊM FORM** để tránh trùng lặp thông tin nộp bài.
-
----
-
-## 🔄 4. Hướng dẫn chi tiết Quy trình thao tác Git (Step-by-Step)
-
-### 👑 Bước 1: Dành cho Trưởng nhóm (Tạo Repo & Thêm Thành viên)
-1. Tạo repo mới trên GitHub (hoặc accept link GitHub Classroom).
-2. Vào tab **Settings** > **Collaborators** (hoặc **Manage access**) > Click **Add people**.
-3. Nhập username GitHub hoặc email của 4-6 thành viên để mời họ làm Contributors.
-4. Gửi link repo cho các thành viên clone về máy.
-
-### 👤 Bước 2: Dành cho TẤT CẢ Thành viên (Tạo Branch cá nhân)
-Sau khi clone repo về máy, mở terminal tại thư mục dự án và tạo nhánh riêng theo tên/mã sinh viên của bạn:
-
-```bash
-# Clone repo chung về máy
-git clone <URL_REPOSITORY_CUA_NHOM>
-cd VinUni_Codelab_Day02
-
-# Tạo và chuyển sang branch cá nhân (Ví dụ: nguyenvana hoặc dev-student1)
-git checkout -b <ten-cua-ban>
-```
-
-### 💻 Bước 3: Làm bài & Push lên Branch cá nhân
-Thực hiện chỉnh sửa code `.py` và hoàn thiện các file `.md` trên branch cá nhân. Sau đó thực hiện commit và push:
-
-```bash
-# Kiểm tra các file đã chỉnh sửa
-git status
-
-# Thêm tất cả file đã làm vào staging
-git add .
-
-# Commit bài làm cá nhân
-git commit -m "Feat: Complete individual assignment by <Ten-Cua-Ban>"
-
-# Push bài làm lên branch cá nhân (KHÔNG push trực tiếp lên main)
-git push origin <ten-cua-ban>
-```
-
-### 🤝 Bước 4: Thảo luận nhóm & Merge file `.md` vào `main` (Dành cho Trưởng nhóm)
-Sau khi tất cả thành viên đã push branch cá nhân lên GitHub:
-
-1. **Thảo luận:** Trưởng nhóm và các thành viên họp review các branch, thảo luận chọn ra bài viết `.md` (Problem Scan, Deep Dive Report, AI Log) xuất sắc nhất.
-2. **Merge file `.md` vào `main`:**
-   ```bash
-   # Trưởng nhóm chuyển về branch main và cập nhật mới nhất
-   git checkout main
-   git pull origin main
-
-   # Lấy nội dung các file .md được chọn từ branch thành viên (Ví dụ từ branch nguyenvana)
-   git checkout nguyenvana -- 01-problem-scan.md 02-deep-dive-report.md 03-ai-log.md 04-workflow-diagram.png
-
-   # Commit nội dung .md đã chắt lọc cho nhóm
-   git commit -m "Chore: Select and merge best markdown reports into main"
-
-   # Push main lên GitHub để nộp bài nhóm
-   git push origin main
-   ```
-3. 🛑 **Nhắc lại:** **KHÔNG** thực hiện checkout hay merge file `.py` vào branch `main`. File `.py` chỉ nằm tại branch riêng của từng thành viên.
-
-### 📝 Bước 5: Điền Form Nộp bài (Dành riêng cho Trưởng nhóm)
-* **Duy nhất Trưởng nhóm** mở Form nộp bài của môn học, điền **Họ và tên Trưởng nhóm** cùng **Link Repository GitHub** của nhóm.
-* Các thành viên còn lại **tuyệt đối không điền form** này nữa.
-
----
-
-## 📝 5. Hướng dẫn chi tiết cách hoàn thiện các file nộp bài
-
-### 📄 1. File `01-problem-scan.md` (Ý tưởng cá nhân & Nhóm)
-File này thể hiện tư duy tìm kiếm bài toán thực tế.
-*   **Cách làm:** Copy và hoàn thiện nội dung của **Phase 1 (SCAN)** và **Phase 2 (QUICK-ASSESS)** từ file `01-worksheet.md`.
-*   **Yêu cầu nội dung:**
-    *   **Bảng quét cơ hội (SCAN):** Điền tối thiểu 5 bài toán thực tế thuộc các công ty thành viên Vingroup.
-    *   **3 Quick Problem Cards:** Điền đầy đủ thông tin cho 3 bài toán tiềm năng nhất (Actor, Quy trình hiện tại, Bottleneck, AI Solution, Metric...).
-
-### 📄 2. File `02-deep-dive-report.md` (Báo cáo Phân tích sâu)
-Báo cáo phân tích sâu dự án AI mà nhóm/cá nhân lựa chọn.
-*   **Cách làm:** Copy và hoàn thiện nội dung của **Phase 3 (DEEP-DIVE)** và **Phase 5 (EVALUATE)** từ file `01-worksheet.md`.
-*   **Yêu cầu nội dung:**
-    *   **Problem Statement (6-field):** Điền đầy đủ 6 trường thông tin cho bài toán đã chọn.
-    *   **Future-State Flow & AI Fit:** Mô tả quy trình tương lai có tích hợp AI (Rule, LLM, Agentic Loop), cơ chế Human-in-the-loop và Fallback.
-    *   **Evaluate:** Đánh giá độ sẵn sàng qua bảng Checklist và đưa ra quyết định GO / NOT YET / NO-GO.
-
-### 🖼️ 3. File `04-workflow-diagram.png` (hoặc `.pdf`)
-Sơ đồ trực quan hóa quy trình vận hành hiện tại.
-*   **Cách làm:** Vẽ sơ đồ quy trình hiện tại (Current-State Workflow) lên giấy/bảng trắng hoặc công cụ vẽ trực tuyến.
-*   **Yêu cầu:** Thể hiện rõ các bước tuần tự, điểm chuyển giao (🔄 **Handoff**), thời gian xử lý và điểm nghẽn cổ chai (🔴 **Bottleneck**).
-
-### 📄 4. File `03-ai-log.md` (Nhật ký tương tác AI)
-*   **Cách làm:** Viết bài tự luận phản ánh quá trình sử dụng AI (ChatGPT, Gemini, Claude...) làm trợ lý đồng hành.
-*   **Yêu cầu:** Nêu rõ AI giúp gì, AI trả lời sai/hallucination ở đâu, và bạn đã sửa prompt/ranh giới ra sao để đạt kết quả chuẩn.
-
-### 🐍 5. File Code `.py` (Bài tập Code Cá nhân)
-*   **Vị trí:** Lưu tại file `.py` cá nhân của bạn (ví dụ: `starter-code/prompt_prototype.py` hoặc file `.py` được yêu cầu).
-*   **Lưu ý:** Chỉ nộp trên branch cá nhân (`git push origin <ten-cua-ban>`), không merge vào `main`.
-
----
-
-## 📊 6. Tóm Tắt Quy Trình Chấm Điểm & Nộp Bài (Summary Rubric)
-
-| Loại Bài Tập / Thao Tác | Định Dạng File / Hành Động | Vị Trí Nộp | Người Thực Hiện | Tiêu Chí Tính Điểm |
-| :--- | :--- | :--- | :--- | :--- |
-| **Code Python** | `.py` | Branch Cá nhân (`<ten>`) | Từng thành viên | **Điểm CÁ NHÂN** (chấm trên branch riêng) |
-| **Báo cáo / Document** | `.md`, `.png` | Branch `main` (Sau khi chọn lọc & merge) | Cả nhóm / Trưởng nhóm đại diện merge | **Điểm NHÓM** (chấm trên branch `main`) |
-| **Form Nộp Bài** | Form trực tuyến | Link Google Form / LMS | **Chỉ DUY NHẤT Trưởng nhóm điền** | Ghi nhận/tổng hợp bài nộp của nhóm |
+Bản nhóm được phát hành trên `main` theo chỉ đạo của người dùng. Trưởng nhóm vẫn cần xác nhận việc đọc chéo và các nhánh cá nhân, sau đó điền form lớp. Báo cáo và PDF ở bảng trên là các tài liệu nộp; việc push không thay thế bước nộp form.
