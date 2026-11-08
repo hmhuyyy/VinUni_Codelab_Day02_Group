@@ -27,7 +27,7 @@ Các yêu cầu chính của tôi trong hội thoại: khám phá đầy đủ r
 
 ### 3.1 Giả định có thể bị biến thành “số liệu thật”
 
-Prompt gợi ý trong tài liệu có yêu cầu ước tính tổn thất. AI có thể tạo con số nghe hợp lý nhưng không có nguồn. Theo yêu cầu ngày 08/11/2026 không dùng AI dự đoán, bản local đã bỏ thời gian, volume, đơn giá, tỷ lệ cải thiện và ranking định lượng do AI gán. Ghi rõ chưa đo; chỉ giữ số có nguồn log/code. Cần người học xác nhận đọc bản sửa; chưa push.
+Prompt gợi ý trong tài liệu có yêu cầu ước tính tổn thất. AI có thể tạo con số nghe hợp lý nhưng không có nguồn. Theo yêu cầu ngày 08/11/2026 không dùng AI dự đoán, bản chỉnh đã bỏ thời gian, volume, đơn giá, tỷ lệ cải thiện và ranking định lượng do AI gán. Ghi rõ chưa đo; chỉ giữ số có nguồn log/code. Sau giai đoạn giữ local, người học yêu cầu commit và push lại bản chỉnh lên nhánh cá nhân `HoangBaoNguyen`; việc công bố báo cáo nhóm trên `main` vẫn chưa thực hiện. Người học cần đọc và xác nhận hiểu nội dung để trình bày.
 
 ### 3.2 Prompt không thay được quyền hạn của ứng dụng
 

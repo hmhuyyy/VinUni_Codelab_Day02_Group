@@ -20,7 +20,7 @@ $env:GEMINI_API_KEY="YOUR_API_KEY"
 
 Code mặc định dùng `gemini-2.5-flash` theo worksheet. Lượt xác nhận được ghi trong báo cáo dùng `gemini-3.5-flash-lite` do giới hạn quota/khả dụng của tài khoản; để chủ động chọn model, đặt `$env:GEMINI_MODEL="gemini-3.5-flash-lite"` trước khi chạy. Không đưa key thật vào code hoặc Git.
 
-Kết quả đã ghi nhận: 82 tests offline đạt; ba ca lõi chạy thật đạt 3/3; bộ chấm kỹ thuật gốc đạt 10/10. Số liệu kinh doanh chưa đo; bản local chỉnh ngày 08/11/2026 đã bỏ các dự báo/ước lượng AI. Chưa push bản chỉnh này. Log chi tiết và công cụ soạn tài liệu được giữ local; kết quả cần chấm nằm trong báo cáo.
+Kết quả đã ghi nhận: 82 tests offline đạt; ba ca lõi chạy thật đạt 3/3; bộ chấm kỹ thuật gốc đạt 10/10. Số liệu kinh doanh chưa đo; bản chỉnh ngày 08/11/2026 đã bỏ các dự báo/ước lượng AI và được cập nhật trên nhánh cá nhân `HoangBaoNguyen` theo yêu cầu người học. Log chi tiết và công cụ soạn tài liệu được giữ local; kết quả cần chấm nằm trong báo cáo.
 
 Kiểm tra bộ bài trước khi nộp:
 

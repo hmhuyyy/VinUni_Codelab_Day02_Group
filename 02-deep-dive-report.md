@@ -251,7 +251,7 @@ Cần chạy lại phiên bản cuối trên 2.5 Flash khi key/quota cho phép, 
 | 5%, 5 km, 300 giây; timeout 11 giây, tối đa 2 HTTP attempts | Policy/cấu hình của prototype | Ngưỡng và cấu hình lab | Thống kê doanh nghiệp, SLA hoặc bảo đảm an toàn thực địa |
 | AHT, volume, acceptance, chi phí, ROI | Chưa có dữ liệu được xác minh | Chưa đo/chưa tính | Không được điền bằng dự báo AI |
 
-Log/JUnit chi tiết giữ local; ba raw outputs được giữ nguyên ngay trong mục 10 để đối chiếu. Bản nhóm ghi attribution cho Nguyên; việc trợ lý chạy lại offline không phải mọi thành viên đã chạy model. Nguồn code là snapshot `cca63ce`; tài liệu local đã được chỉnh 08/11/2026 theo yêu cầu không dùng AI dự đoán số liệu, chưa push.
+Log/JUnit chi tiết giữ local; ba raw outputs được giữ nguyên ngay trong mục 10 để đối chiếu. Giữ attribution cho nguồn Nguyên; việc trợ lý chạy lại offline không phải mọi thành viên đã chạy model. Nguồn code là snapshot `cca63ce`; tài liệu đã được chỉnh 08/11/2026 theo yêu cầu không dùng AI dự đoán số liệu và cập nhật trên nhánh cá nhân `HoangBaoNguyen`. Bản báo cáo nhóm và việc công bố lên `main` được xử lý riêng.
 
 ### Next experiment có owner và điều kiện dừng
 
