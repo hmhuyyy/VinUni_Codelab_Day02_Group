@@ -1,0 +1,79 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 3127 >>
+stream
+BT /F1 14 Tf 0 0 0 rg 1 0 0 1 35 550 Tm (CURRENT-STATE WORKFLOW - XANH SM LOW-BATTERY ASSISTANCE) Tj ET
+BT /F1 9 Tf 0 0 0 rg 1 0 0 1 35 524 Tm (Scoping hypothesis for validation with operations staff; baseline times are not yet measured.) Tj ET
+0.82 0.89 0.96 rg 0.82 0.89 0.96 RG 1.2 w 28 350 112 112 re B
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 36 438 Tm (1. Alert) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 36 424 Tm (Vehicle telemetry) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 36 410 Tm (or driver report) Tj ET
+0.82 0.89 0.96 rg 0.82 0.89 0.96 RG 1.2 w 163 350 112 112 re B
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 171 438 Tm (2. Share data) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 171 424 Tm (Driver provides) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 171 410 Tm (battery + location) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 171 396 Tm (HANDOFF) Tj ET
+0.96 0.76 0.72 rg 0.96 0.76 0.72 RG 1.2 w 298 350 112 112 re B
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 306 438 Tm (3. Verify) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 306 424 Tm (Operator checks) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 306 410 Tm (battery + GPS) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 306 396 Tm (BOTTLENECK) Tj ET
+0.96 0.76 0.72 rg 0.96 0.76 0.72 RG 1.2 w 433 350 112 112 re B
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 441 438 Tm (4. Coordinate) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 441 424 Tm (Check safe option;) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 441 410 Tm (contact assistance) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 441 396 Tm (BOTTLENECK) Tj ET
+0.8 0.92 0.8 rg 0.8 0.92 0.8 RG 1.2 w 568 350 112 112 re B
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 576 438 Tm (5. Approve) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 576 424 Tm (Operator reviews) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 576 410 Tm (and informs driver) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 576 396 Tm (HANDOFF) Tj ET
+0.82 0.89 0.96 rg 0.82 0.89 0.96 RG 1.2 w 703 350 112 112 re B
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 711 438 Tm (6. Follow plan) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 711 424 Tm (Driver acts on) Tj ET
+BT /F1 8 Tf 0 0 0 rg 1 0 0 1 711 410 Tm (approved guidance) Tj ET
+0 0 0 RG 1 w 143 406 m 160 406 l S
+160 406 m 154 410 l 154 402 l h f
+0 0 0 RG 1 w 278 406 m 295 406 l S
+295 406 m 289 410 l 289 402 l h f
+0 0 0 RG 1 w 413 406 m 430 406 l S
+430 406 m 424 410 l 424 402 l h f
+0 0 0 RG 1 w 548 406 m 565 406 l S
+565 406 m 559 410 l 559 402 l h f
+0 0 0 RG 1 w 683 406 m 700 406 l S
+700 406 m 694 410 l 694 402 l h f
+BT /F1 11 Tf 0 0 0 rg 1 0 0 1 35 290 Tm (SAFETY BOUNDARY) Tj ET
+BT /F1 9 Tf 0 0 0 rg 1 0 0 1 35 267 Tm (If verified battery is below 5%, do not recommend a charging station more than 5 km away.) Tj ET
+BT /F1 9 Tf 0 0 0 rg 1 0 0 1 35 245 Tm (A mobile-charger dispatch is a proposal until an authorized operator confirms it.) Tj ET
+BT /F1 11 Tf 0 0 0 rg 1 0 0 1 35 192 Tm (MEASUREMENT NEEDED) Tj ET
+BT /F1 9 Tf 0 0 0 rg 1 0 0 1 35 169 Tm (Record alert-to-verified-plan time, operator handling time, assistance availability, and resolution.) Tj ET
+BT /F1 9 Tf 0 0 0 rg 1 0 0 1 35 147 Tm (Do not report an estimated baseline as observed company data.) Tj ET
+BT /F1 9 Tf 0 0 0 rg 1 0 0 1 35 70 Tm (Legend: red = potential bottleneck; arrows = sequence / handoff; green = human approval step.) Tj ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000000317 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3496
+%%EOF

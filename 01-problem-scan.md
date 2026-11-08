@@ -12,7 +12,7 @@
 
 | # | Subsidiary | Lens | Mô tả ngắn bài toán |
 |---|---|---|---|
-| 1 | Xanh SM | Lặp lại | Khi điểm đón khó tiếp cận hoặc điều kiện đường thay đổi, tài xế/điều hành viên có thể phải kiểm tra và điều chỉnh phương án đón thủ công; cần xác minh tần suất và ảnh hưởng tới thời gian chờ. |
+| 1 | Xanh SM | Lặp lại | Khi xe điện gần cạn pin, tài xế và điều hành viên phải xác minh mức pin/vị trí rồi phối hợp phương án hỗ trợ sạc; cần xác minh tần suất và thời gian xử lý thực tế. |
 | 2 | Xanh SM | Pain từ stakeholder | Tài xế và điều hành viên có thể mất thời gian phối hợp khi khách yêu cầu đổi điểm đón hoặc lộ trình, nhất là giờ cao điểm; cần phỏng vấn để xác nhận bottleneck. |
 | 3 | VinFast | Tốn thời gian | Nhân viên có thể phải tổng hợp thủ công thông tin yêu cầu bảo dưỡng từ nhiều nguồn trước khi chuyển cho bộ phận phù hợp; cần xác minh công cụ và thời gian xử lý hiện tại. |
 | 4 | Vinhomes | AI có thể tốt hơn | Yêu cầu bảo trì, khiếu nại và câu hỏi thường gặp của cư dân có thể cần đọc, phân loại và chuyển tuyến thủ công; cần đo thời gian phản hồi và tỷ lệ chuyển sai tuyến. |
@@ -24,20 +24,20 @@
 
 ## Quick Problem Card #1
 
-Bài toán: Hệ thống điều phối xe Xanh SM gợi ý điểm đón và điểm giao không chính xác, khiến tài xế phải điều chỉnh thủ công và làm tăng thời gian chờ, tỷ lệ hủy chuyến.
+Bài toán: Khi xe Xanh SM báo pin dưới 5%, điều hành viên cần nhanh chóng xác minh thông tin và chuẩn bị phương án hỗ trợ sạc an toàn mà không khuyến nghị trạm sạc cách quá 5 km.
 
-- Công ty thành viên: Xanh SM
-- Ai đang đau (Actor)? Tài xế, điều hành viên, khách hàng, bộ phận vận hành
+- Công ty thành viên: Xanh SM (đội xe điện)
+- Ai đang đau (Actor)? Tài xế, điều hành viên đội xe, khách hàng đang đi trên xe
 - Workflow thủ công hiện tại:
-  1. Nhận yêu cầu đặt xe hoặc đổi lộ trình
-  2. Kiểm tra vị trí hiện tại và nhu cầu chuyến đi
-  3. Hệ thống đề xuất điểm đón/điểm giao
-  4. Tài xế điều chỉnh thủ công nếu không hợp lý
-  5. Chuyển lại cho điều hành viên xác nhận
-- Bước nào tốn thời gian/lỗi nhất? Điều chỉnh thủ công lộ trình và điểm đón trong giờ cao điểm; trung bình 8–12 phút/chuyến
-- AI có thể nhảy vào hỗ trợ ở bước nào? Đề xuất điểm đón phù hợp theo thời gian thực, phân tích lưu lượng, dự đoán điểm đón hợp lý trước khi tài xế chỉnh sửa
-- Đo thành công bằng gì (Metric có số)? Mục tiêu thử nghiệm: giảm thời gian xử lý điều chỉnh từ baseline đo được xuống dưới 2 phút; giảm tỷ lệ hủy/lệch lộ trình ít nhất 20% so với baseline. Các con số 8–12 phút và tỷ lệ hiện tại cần được kiểm chứng bằng log hoặc quan sát.
-- Quick Architecture: Rule (tối ưu tuyến/điểm đón); có thể dùng LLM phụ trợ để tóm tắt yêu cầu bằng ngôn ngữ tự nhiên.
+  1. Xe phát cảnh báo pin thấp
+  2. Tài xế/điều hành viên xác minh mức pin và vị trí
+  3. Điều hành viên kiểm tra phương án an toàn, gồm trạm sạc gần hoặc xe sạc di động
+  4. Điều hành viên liên hệ tài xế và xác nhận phương án
+  5. Tài xế làm theo hướng dẫn đã được xác nhận
+- Bước nào tốn thời gian/lỗi nhất? Xác minh dữ liệu và phối hợp phương tiện hỗ trợ; thời gian baseline chưa được đo.
+- AI có thể nhảy vào hỗ trợ ở bước nào? Sau khi nhận dữ liệu đã xác minh, AI tạo bản nháp lý do/đề xuất điều xe sạc di động khi pin dưới 5%; không tự gửi lệnh điều xe.
+- Đo thành công bằng gì (Metric có số)? Mục tiêu thử nghiệm: 100% ca có pin dưới 5% không được gợi ý trạm xa hơn 5 km; giảm thời gian từ cảnh báo đến khi có phương án được nhân viên duyệt xuống dưới 2 phút. Baseline cần đo.
+- Quick Architecture: Rule / State-Machine cho ngưỡng pin và khoảng cách; LLM chỉ soạn bản nháp có cấu trúc.
 
 ## Quick Problem Card #2
 
