@@ -15,7 +15,7 @@ Các yêu cầu chính của tôi trong hội thoại: khám phá đầy đủ r
 |---|---|---|---|---|
 | 1 | Hiểu repo từ đầu tới cuối | Đọc README, worksheet, ví dụ, inspiration, code và bộ chấm; đối chiếu PDF | Phân biệt rubric 60/40 với autograder 10 điểm. Không coi bài mẫu hoặc nhánh đồng đội là bài cá nhân của mình | Tài liệu gốc trong repo; main ban đầu ở commit `9ad1a44` |
 | 2 | Xác định phần việc cá nhân và nhóm | Lập bản đồ điểm và đầu ra cần nộp | Worksheet yêu cầu ≥3 adversarial cases dù starter/grader chỉ ≥2; bám yêu cầu nội dung cao hơn | `README.md` và rubric trong worksheet |
-| 3 | Chọn một candidate nhất quán | Đề xuất 5 problems, 3 cards và candidate Xanh SM | Mọi số liệu volume/thời gian là giả định; không dùng từ “khảo sát cho thấy” hoặc nhận là số nội bộ | `01-problem-scan.md` |
+| 3 | Chọn một candidate nhất quán | Đề xuất 5 problems, 3 cards và candidate Xanh SM | Volume/thời gian chưa đo; bản rà soát bỏ toàn bộ ước lượng AI, không nhận là số nội bộ | `01-problem-scan.md` |
 | 4 | Stress-test giải pháp | Phản biện Rule vs LLM vs Agent | Rule giữ quyết định pin/trạm. LLM cần chứng minh tốt hơn template; không mặc định build Agent | `02-deep-dive-report.md`, mục baseline và AI Fit |
 | 5 | Viết prototype boundary | Hoàn thiện prompt, parser, rule guard và fallback | Giữ raw output nguyên trạng; không thêm tag để rồi tính model pass. Fallback không xóa dấu vết lỗi | `starter-code/prompt_prototype.py` |
 | 6 | Chạy SDK thật | Cài SDK trong `.venv` và gọi Gemini bằng dữ liệu mô phỏng | Timeout 6,5 giây bị API từ chối vì tối thiểu 10 giây; sửa thành 11 giây. API v1 không chấp nhận chỉ thị ở cấu hình đang dùng; chỉ định `v1beta` | Phần điều kiện API và kết quả thử nghiệm trong báo cáo |
@@ -27,7 +27,7 @@ Các yêu cầu chính của tôi trong hội thoại: khám phá đầy đủ r
 
 ### 3.1 Giả định có thể bị biến thành “số liệu thật”
 
-Prompt gợi ý trong tài liệu có yêu cầu ước tính tổn thất. AI có thể tạo con số nghe hợp lý nhưng không có nguồn. Cách xử lý trong bài: đánh nhãn giả định ngay đầu mỗi phần, đưa công thức kiểm được, giữ phần cần kiểm chứng và không khẳng định quan sát tại doanh nghiệp. 12 case/ngày và 12 phút/case không phải kết quả field research.
+Prompt gợi ý trong tài liệu có yêu cầu ước tính tổn thất. AI có thể tạo con số nghe hợp lý nhưng không có nguồn. Theo yêu cầu ngày 08/11/2026 không dùng AI dự đoán, bản local đã bỏ thời gian, volume, đơn giá, tỷ lệ cải thiện và ranking định lượng do AI gán. Ghi rõ chưa đo; chỉ giữ số có nguồn log/code. Cần người học xác nhận đọc bản sửa; chưa push.
 
 ### 3.2 Prompt không thay được quyền hạn của ứng dụng
 
@@ -61,7 +61,7 @@ Tôi đã yêu cầu một agent Sol 6.1 audit độc lập, yêu cầu đồng 
 
 Việc đọc lại dòng 139 của worksheet làm rõ một điểm: đề **chỉ định** 2.5 Flash, nhưng không ghi chế tài đổi model. Trợ lý đã điều chỉnh cách diễn đạt quá chặt trước đó. Vì vậy bài giữ model mặc định theo đề, ghi đúng model thực chạy và lý do thay thế, thay vì tuyên bố đổi model được mặc nhiên cho phép hoặc tự động bị trừ điểm. Đây là ví dụ cần đòi căn cứ ngay cả khi AI trả lời rất chắc chắn.
 
-Audit tại snapshot `bb1f3bd` ước lượng 91/100 và tìm được lỗi số cực lớn gây overflow/fallback crash cùng phản ví dụ câu chữ vượt guard. Khi tôi yêu cầu tiếp tục hoàn thiện để nộp, bản mới sửa thứ tự kiểm khoảng số, thêm bộ lọc cho các phản ví dụ và **19 tests bổ sung**, nâng từ 63 lên 82 offline tests. Prompt vẫn v2, validator ghi riêng v3 để phân biệt thay đổi code với thay prompt; output thô cũ không bị sửa.
+Audit tại snapshot `bb1f3bd` tìm được lỗi số cực lớn gây overflow/fallback crash cùng phản ví dụ câu chữ vượt guard. Khi tôi yêu cầu tiếp tục hoàn thiện để nộp, bản mới sửa thứ tự kiểm khoảng số, thêm bộ lọc cho các phản ví dụ và **19 tests bổ sung**, nâng từ 63 lên 82 offline tests. Prompt vẫn v2, validator ghi riêng v3 để phân biệt thay đổi code với thay prompt; output thô cũ không bị sửa.
 
 Tôi cũng yêu cầu đối chiếu yêu cầu nguyên văn. Card #1 được rút từ sáu xuống năm bước theo mẫu; phần deep-dive vẫn giữ sáu bước chi tiết. Bổ sung bản artifact pack một trang, rubric chấm chất lượng và đối chứng template trên ba output model đã lưu. Template cũng đạt contract nên bài không nhận LLM tạo lợi ích đã được chứng minh. Tôi chưa tự phỏng vấn stakeholder hay chấm output với người vận hành; các hoạt động này vẫn là kế hoạch.
 
@@ -92,3 +92,7 @@ Tôi mang vào thảo luận nhóm một candidate có workflow, metric, boundar
 Trước khi nộp, người học cần đọc lại nội dung, kiểm tra các giả định và hiểu cách chạy code để tự giải thích được phần việc mang tên mình. Nhật ký không tuyên bố các hoạt động stakeholder chưa diễn ra.
 
 Khi giải thích bài, cần chỉ được vai trò của `policy_action`, `validate_response`, `safe_fallback` và `evaluate_prompt`; phân biệt test offline với lượt model thật, mục tiêu thiết kế với số liệu đã đo.
+
+## 7. Rà soát số liệu theo yêu cầu 08/11/2026
+
+Trợ lý đã chạy lại 82 test offline, kết quả 82/82 đạt và không gọi model mới; đối chiếu raw core, JUnit và log grader. Bản cá nhân, bản nhóm, PDF và demo local được chỉnh để bỏ thống kê/dự báo không có nguồn. Log gốc giữ nguyên, số kỹ thuật không dùng để dự đoán hiệu quả vận hành. Người học cần đọc và xác nhận nội dung trước khi công bố.
